@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="max-width: 900px; margin: 30px auto;">
+
+    <a href="{{ url_for('auth.support') }}" class="btn btn-sm btn-secondary mb-3">
+        ← Back to Support Center
+    </a>
+
+    <div style="background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+        <h3>Ticket #{{ ticket.id }}</h3>
+        <p><strong>Subject:</strong> {{ ticket.subject }}</p>
+        <p><strong>Status:</strong> {{ ticket.status|capitalize }}</p>
+        <p><strong>Created:</strong> {{ ticket.created_at.strftime('%d %b %Y, %I:%M %p') }}</p>
+    </div>
+
+    <div style="background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+        <h4>Conversation</h4>
+
+        {% if messages %}
+            {% for msg in messages %}
+                <div style="
+                    margin-bottom: 15px;
+                    padding: 12px;
+                    border-radius: 10px;
+                    {% if msg.sender_type == 'user' %}
+                        background: #eaf4ff;
+                        text-align: right;
+                    {% else %}
+                        background: #f4f4f4;
+                        text-align: left;
+                    {% endif %}
+                ">
+                    <p style="margin: 0 0 6px 0;">
+                        <strong>
+                            {% if msg.sender_type == 'user' %}
+                                You
+                            {% else %}
+                                Support
+                            {% endif %}
+                        </strong>
+                    </p>
+
+                    <p style="margin: 0;">{{ msg.message }}</p>
+
+                    <small style="color: #666;">
+                        {{ msg.created_at.strftime('%d %b %Y, %I:%M %p') }}
+                    </small>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No messages yet.</p>
+        {% endif %}
+    </div>
+
+    {% if ticket.status != "closed" %}
+    <div style="background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 20px;">
+        <h4>Reply</h4>
+        <form method="POST">
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+
+            <div style="margin-bottom: 15px;">
+                <textarea
+                    name="message"
+                    rows="4"
+                    class="form-control"
+                    placeholder="Type your reply here..."
+                    required
+                ></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Send Reply
+            </button>
+        </form>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

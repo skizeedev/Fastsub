@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<h3>
+
+Announcements
+
+</h3>
+
+{% for announcement in announcements %}
+
+<div class="card mb-3 shadow-sm">
+
+<div class="card-body">
+
+<h5>
+
+{{ announcement.title }}
+
+</h5>
+
+<p>
+
+{{ announcement.message }}
+
+</p>
+
+<small class="text-muted">
+
+{{ announcement.created_at.strftime("%d %b %Y %I:%M %p") }}
+
+</small>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

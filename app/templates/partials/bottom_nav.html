@@ -1,0 +1,179 @@
+<nav class="fastsub-bottom-nav">
+
+    <!-- HOME -->
+    <a href="{{ url_for('auth.dashboard') }}"
+       class="fastsub-bottom-item {% if request.endpoint == 'auth.dashboard' %}active{% endif %}">
+
+        <i class="bi bi-house-door-fill"></i>
+        <span>Home</span>
+
+    </a>
+
+
+    <!-- HISTORY -->
+    <a href="{{ url_for('auth.transactions') }}"
+       class="fastsub-bottom-item {% if request.endpoint == 'auth.transactions' %}active{% endif %}">
+
+        <i class="bi bi-clock-history"></i>
+        <span>History</span>
+
+    </a>
+
+
+    <!-- CENTER QUICK ACTION -->
+    <div class="fastsub-bottom-center">
+
+        <button
+            type="button"
+            class="fastsub-quick-btn"
+            data-bs-toggle="collapse"
+            data-bs-target="#fastsubQuickActions"
+            aria-controls="fastsubQuickActions"
+            aria-expanded="false"
+        >
+
+            <i class="bi bi-plus-lg"></i>
+
+        </button>
+
+    </div>
+
+
+    <!-- WALLET -->
+    <a href="{{ url_for('auth.wallet_history') }}"
+       class="fastsub-bottom-item {% if request.endpoint == 'auth.wallet_history' %}active{% endif %}">
+
+        <i class="bi bi-wallet2"></i>
+        <span>Wallet</span>
+
+    </a>
+
+
+    <!-- PROFILE -->
+    <a href="{{ url_for('auth.profile') }}"
+       class="fastsub-bottom-item {% if request.endpoint == 'auth.profile' %}active{% endif %}">
+
+        <i class="bi bi-person-fill"></i>
+        <span>Profile</span>
+
+    </a>
+
+</nav>
+
+
+<!-- =========================================
+     QUICK SERVICES
+========================================= -->
+
+<div
+    class="collapse fastsub-quick-actions"
+    id="fastsubQuickActions"
+>
+
+    <div class="fastsub-quick-card">
+
+        <div class="fastsub-quick-header">
+
+            <strong>
+                <i class="bi bi-grid-fill me-2"></i>
+                Quick Services
+            </strong>
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-toggle="collapse"
+                data-bs-target="#fastsubQuickActions"
+                aria-label="Close"
+            ></button>
+
+        </div>
+
+
+        <div class="fastsub-quick-grid">
+
+
+            <!-- DATA -->
+
+            <a
+                href="{{ url_for('auth.buy_data_page') }}"
+                class="fastsub-quick-item"
+            >
+
+                <i class="bi bi-wifi"></i>
+
+                <span>
+                    Data
+                </span>
+
+            </a>
+
+
+            <!-- AIRTIME -->
+
+            <a
+                href="{{ url_for('auth.airtime') }}"
+                class="fastsub-quick-item"
+            >
+
+                <i class="bi bi-phone-fill"></i>
+
+                <span>
+                    Airtime
+                </span>
+
+            </a>
+
+
+            <!-- CABLE TV -->
+
+            <a
+                href="{{ url_for('auth.cable_tv_page') }}"
+                class="fastsub-quick-item"
+            >
+
+                <i class="bi bi-tv-fill"></i>
+
+                <span>
+                    Cable TV
+                </span>
+
+            </a>
+
+
+            <!-- ELECTRICITY -->
+
+            <a
+                href="{{ url_for('auth.electricity_page') }}"
+                class="fastsub-quick-item"
+            >
+
+                <i class="bi bi-lightning-charge-fill"></i>
+
+                <span>
+                    Electricity
+                </span>
+
+            </a>
+
+
+            <!-- BETTING -->
+
+            <a
+                href="{{ url_for('auth.betting_page') }}"
+                class="fastsub-quick-item"
+            >
+
+                <i class="bi bi-ticket-perforated-fill"></i>
+
+                <span>
+                    Betting
+                </span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

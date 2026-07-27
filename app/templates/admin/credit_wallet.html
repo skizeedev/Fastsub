@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+
+<div class="card shadow">
+
+<div class="card-header">
+
+Credit Wallet
+
+</div>
+
+<div class="card-body">
+
+<h4>{{ user.username }}</h4>
+
+<p>Current Balance:
+<strong>₦{{ "{:,.2f}".format(user.wallet_balance) }}</strong>
+</p>
+
+<form method="POST">
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}">
+
+
+<div class="mb-3">
+
+<label>Amount</label>
+
+<input
+type="number"
+step="0.01"
+name="amount"
+class="form-control"
+required>
+
+</div>
+
+<div class="mb-3">
+
+<label>Reason</label>
+
+<select
+name="reason"
+class="form-control">
+
+<option>Manual Funding</option>
+
+<option>Bonus</option>
+
+<option>Refund</option>
+
+<option>Compensation</option>
+
+<option>Promotion</option>
+
+<option>Correction</option>
+
+</select>
+
+</div>
+
+<button class="btn btn-success">
+
+Credit Wallet
+
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

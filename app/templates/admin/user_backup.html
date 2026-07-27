@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>All Users</h2>
+
+<table class="table table-bordered">
+
+    <thead>
+
+        <tr>
+
+            <th>ID</th>
+
+            <th>Username</th>
+
+            <th>Email</th>
+
+            <th>Balance</th>
+
+            <th>Referral Code</th>
+
+            <th>Action</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+    {% for user in users %}
+
+        <tr>
+
+            <td>{{ user.id }}</td>
+
+            <td>{{ user.username }}</td>
+
+            <td>{{ user.email }}</td>
+
+            <td>₦{{ user.wallet_balance }}</td>
+
+            <td>{{ user.referral_code }}</td>
+
+            <td>
+
+                <a
+                    href="/admin/credit/{{ user.id }}"
+                    class="btn btn-success btn-sm">
+
+                    Credit
+
+                </a>
+
+            </td>
+
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow border-0">
+
+        <div class="card-body">
+
+            <h3 class="mb-4">
+                Fund Betting Wallet
+            </h3>
+
+            <form method="POST"
+                  action="{{ url_for('auth.verify_betting') }}">
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}">
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Betting Company
+                    </label>
+
+                    <select
+                        name="betting_company"
+                        id="betting_company"
+                        class="form-control"
+                        required>
+
+                        <option value="">
+                            Select Betting Company
+                        </option>
+
+                        {% for code,data in companies.items() %}
+
+                        <option
+                            value="{{ code }}"
+                            data-name="{{ data.name }}"
+                            data-min="{{ data.min }}"
+                            data-max="{{ data.max }}">
+
+                            {{ data.name }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Customer ID
+
+                    </label>
+
+                    <input
+                        type="text"
+                        name="customer_id"
+                        class="form-control"
+                        required>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Amount
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="amount"
+                        name="amount"
+                        class="form-control"
+                        required>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Phone Number
+
+                    </label>
+
+                    <input
+                        type="text"
+                        name="phone"
+                        value="{{ current_user.phone }}"
+                        class="form-control"
+                        required>
+
+                </div>
+
+                <input
+                    type="hidden"
+                    id="betting_company_name"
+                    name="betting_company_name">
+
+                <button
+                    class="btn btn-primary w-100">
+
+                    Verify Customer
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const company=document.getElementById("betting_company");
+
+const hidden=document.getElementById("betting_company_name");
+
+const amount=document.getElementById("amount");
+
+company.addEventListener("change",function(){
+
+    hidden.value=this.options[this.selectedIndex].dataset.name;
+
+    amount.min=this.options[this.selectedIndex].dataset.min;
+
+    amount.max=this.options[this.selectedIndex].dataset.max;
+
+});
+
+</script>
+
+{% endblock %}

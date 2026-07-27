@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+            <div class="mb-4">
+                <h3 class="fw-bold mb-1">Confirm Electricity Payment</h3>
+                <p class="text-muted mb-0">
+                    Please review the verified meter details before completing payment.
+                </p>
+            </div>
+
+            <div class="border rounded-3 p-3 bg-light mb-4">
+                <div class="row mb-3">
+                    <div class="col-5 col-md-4 fw-semibold text-muted">Electric Company</div>
+                    <div class="col-7 col-md-8">{{ electric_company_name }}</div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-5 col-md-4 fw-semibold text-muted">Meter Type</div>
+                    <div class="col-7 col-md-8">{{ meter_type_name }}</div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-5 col-md-4 fw-semibold text-muted">Meter Number</div>
+                    <div class="col-7 col-md-8">{{ meter_no }}</div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-5 col-md-4 fw-semibold text-muted">Customer Name</div>
+                    <div class="col-7 col-md-8">{{ customer_name }}</div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-5 col-md-4 fw-semibold text-muted">Amount</div>
+                    <div class="col-7 col-md-8">₦{{ "{:,.0f}".format(amount|float) }}</div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-5 col-md-4 fw-semibold text-muted">Phone Number</div>
+                    <div class="col-7 col-md-8">{{ phone }}</div>
+                </div>
+
+                <div class="row">
+                    <div class="col-5 col-md-4 fw-semibold text-muted">Verification</div>
+                    <div class="col-7 col-md-8">
+                        <span class="badge bg-success">Verified successfully</span>
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST"
+                  action="{{ url_for('auth.confirm_electricity') }}">
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}">
+
+                <input type="hidden" name="electric_company" value="{{ electric_company_code }}">
+                <input type="hidden" name="meter_type" value="{{ meter_type_code }}">
+                <input type="hidden" name="meter_no" value="{{ meter_no }}">
+                <input type="hidden" name="amount" value="{{ amount }}">
+                <input type="hidden" name="phone" value="{{ phone }}">
+                <input type="hidden" name="customer_name" value="{{ customer_name }}">
+
+                <div class="d-grid gap-2">
+                    <button type="submit" id="submitBtn" class="btn btn-primary py-2 fw-semibold">
+                        Confirm Purchase
+                    </button>
+
+                    <a href="{{ url_for('auth.electricity_page') }}" class="btn btn-outline-secondary py-2">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+document.querySelector("form").addEventListener("submit",function(){
+
+const btn=document.getElementById("submitBtn");
+
+btn.disabled=true;
+
+btn.innerHTML="Processing...";
+
+});
+
+</script>
+{% endblock %}

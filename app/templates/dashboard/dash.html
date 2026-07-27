@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>
+    Welcome,
+    {{ current_user.username }}
+</h2>
+
+<br>
+
+<div class="row">
+
+    <div class="col-md-3 mb-3">
+
+        <div class="card p-3">
+
+            <h5>Wallet Balance</h5>
+
+            <h3>
+                ₦{{ current_user.wallet_balance }}
+            </h3>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3 mb-3">
+
+        <div class="card p-3">
+
+            <h5>Total Funded</h5>
+
+            <h3>
+                ₦{{ current_user.total_funded }}
+            </h3>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3 mb-3">
+
+        <div class="card p-3">
+
+            <h5>Total Spent</h5>
+
+            <h3>
+                ₦{{ current_user.total_spent }}
+            </h3>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3 mb-3">
+
+        <div class="card p-3">
+
+            <h5>Referral Earnings</h5>
+
+            <h3>
+                ₦{{ current_user.referral_earnings }}
+            </h3>
+
+        </div>
+
+    </div>
+
+</div>
+<div style="margin-top:20px;">
+    <a href="{{ url_for('auth.fund_wallet') }}">
+        <button style="
+            padding:10px 20px;
+            background:#28a745;
+            color:white;
+            border:none;
+            border-radius:5px;
+        ">
+            + Fund Wallet
+        </button>
+    </a>
+</div>
+<hr>
+
+<div class="row">
+
+    <div class="col-md-4 mb-3">
+
+        <a
+            href="/airtime"
+            class="btn btn-primary w-100 p-3">
+
+            Buy Airtime
+
+        </a>
+
+    </div>
+
+    <div class="col-md-4 mb-3">
+
+        <a
+            href="/data"
+            class="btn btn-primary w-100 p-3">
+
+            Buy Data
+
+        </a>
+
+    </div>
+
+    <div class="col-md-4 mb-3">
+
+        <a
+            href="/electricity"
+            class="btn btn-primary w-100 p-3">
+
+            Electricity
+
+        </a>
+
+    </div>
+
+    <div class="col-md-4 mb-3">
+
+        <a
+            href="{{ url_for('auth.cable_tv_page') }}"
+            class="btn btn-primary w-100 p-3">
+
+            Cable TV
+
+        </a>
+
+    </div>
+
+    <div class="col-md-4 mb-3">
+
+        <a
+            href="/betting"
+            class="btn btn-primary w-100 p-3">
+
+            Betting
+
+        </a>
+
+    </div>
+
+    <div class="col-md-4 mb-3">
+
+        <a
+            href="/transactions"
+            class="btn btn-success w-100 p-3">
+
+            View Transactions
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

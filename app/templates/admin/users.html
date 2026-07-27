@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>User Management</h2>
+
+<form method="GET">
+
+<div class="input-group mb-4">
+
+<input
+type="text"
+name="search"
+value="{{ search }}"
+placeholder="Search username, email or referral code"
+class="form-control">
+
+<button class="btn btn-primary">
+
+Search
+
+</button>
+
+</div>
+
+</form>
+
+<table class="table table-hover align-middle">
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>User</th>
+
+<th>Email</th>
+
+<th>Wallet</th>
+
+<th>Verified</th>
+
+<th>Admin</th>
+
+<th>Status</th>
+
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for user in users %}
+
+<tr>
+
+<td>{{ user.id }}</td>
+
+<td>
+
+<strong>{{ user.username }}</strong>
+
+<br>
+
+<small>{{ user.referral_code }}</small>
+
+</td>
+
+<td>{{ user.email }}</td>
+
+<td>
+
+₦{{ "{:,.2f}".format(user.wallet_balance) }}
+
+</td>
+
+<td>
+
+{% if user.is_verified %}
+
+<span class="badge bg-success">
+
+Verified
+
+</span>
+
+{% else %}
+
+<span class="badge bg-warning">
+
+Pending
+
+</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+{% if user.is_admin %}
+
+<span class="badge bg-danger">
+
+Admin
+
+</span>
+
+{% else %}
+
+<span class="badge bg-secondary">
+
+User
+
+</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+{% if user.is_active %}
+
+<span class="badge bg-success">
+
+Active
+
+</span>
+
+{% else %}
+
+<span class="badge bg-danger">
+
+Suspended
+
+</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+<a
+class="btn btn-sm btn-info"
+href="{{ url_for('admin.admin_view_user', user_id=user.id) }}">
+
+View
+
+</a>
+
+<a
+class="btn btn-sm btn-success"
+href="{{ url_for('admin.credit_wallet', user_id=user.id) }}">
+
+Credit
+
+</a>
+
+<a
+class="btn btn-sm btn-warning"
+href="{{ url_for('admin.debit_wallet', user_id=user.id) }}">
+
+Debit
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Buy Airtime</h1>
+
+<form method="POST">
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}">
+
+    <div class="mb-3">
+        <label>Network</label>
+
+        <select
+            name="network"
+            class="form-control"
+            required>
+
+            <option value="MTN">MTN</option>
+            <option value="Airtel">Airtel</option>
+            <option value="Glo">Glo</option>
+            <option value="9mobile">9mobile</option>
+
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Phone Number</label>
+
+        <input
+            type="text"
+            name="phone"
+            class="form-control"
+            required>
+    </div>
+
+    <div class="mb-3">
+        <label>Amount</label>
+
+        <input
+            type="number"
+            name="amount"
+            class="form-control"
+            required>
+    </div>
+
+    <button
+        type="submit"
+        class="btn btn-success">
+
+        Buy Airtime
+
+    </button>
+
+</form>
+
+{% endblock %}

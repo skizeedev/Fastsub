@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Confirm Airtime Purchase</h2>
+
+<div class="card p-3">
+
+    <p>
+        <strong>Network:</strong>
+        {{ network }}
+    </p>
+
+    <p>
+        <strong>Phone:</strong>
+        {{ phone }}
+    </p>
+
+    <p>
+        <strong>Amount:</strong>
+        ₦{{ amount }}
+    </p>
+
+    <p>
+        <strong>Current Balance:</strong>
+        ₦{{ current_user.wallet_balance }}
+    </p>
+
+    <p>
+        <strong>Balance After Purchase:</strong>
+        ₦{{ current_user.wallet_balance - amount }}
+    </p>
+
+</div>
+
+<br>
+
+<form method="POST"
+      action="/airtime/confirm">
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}">
+
+
+    <input type="hidden" name="network" value="{{ network }}">
+    <input type="hidden" name="phone" value="{{ phone }}">
+    <input type="hidden" name="amount" value="{{ amount }}">
+
+    <button
+        type="submit"
+        id="submitBtn"
+        class="btn btn-success">
+
+        Confirm Purchase
+
+    </button>
+
+    <a
+        href="/airtime"
+        class="btn btn-secondary">
+
+        Cancel
+
+    </a>
+
+</form>
+
+<script>
+
+document.querySelector("form").addEventListener("submit",function(){
+
+const btn=document.getElementById("submitBtn");
+
+btn.disabled=true;
+
+btn.innerHTML="Processing...";
+
+});
+
+</script>
+
+{% endblock %}

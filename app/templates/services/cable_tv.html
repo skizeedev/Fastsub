@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h3 class="mb-4">Cable TV Subscription</h3>
+
+            <form method="POST"
+                  action="{{ url_for('auth.verify_cable_tv_route') }}">
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}">
+                
+                <!-- Cable Provider -->
+                <div class="mb-3">
+                    <label for="cable_tv" class="form-label">Cable Provider</label>
+                    <select name="cable_tv" id="cable_tv" class="form-control" required>
+                        <option value="">Select provider</option>
+                        {% for provider_id, provider_name in providers.items() %}
+                            <option value="{{ provider_id }}"
+                                {% if request.form.get('cable_tv') == provider_id %}selected{% endif %}>
+                                {{ provider_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Package -->
+                <div class="mb-3">
+                    <label for="package" class="form-label">Package</label>
+                    <select name="package" id="package" class="form-control" required>
+                        <option value="">Select package</option>
+                    </select>
+                    <small class="text-muted">Select a provider first to load packages.</small>
+                </div>
+
+                <!-- Smartcard -->
+                <div class="mb-3">
+                    <label for="smartcard_no" class="form-label">Smartcard / IUC Number</label>
+                    <input
+                        type="text"
+                        name="smartcard_no"
+                        id="smartcard_no"
+                        class="form-control"
+                        value="{{ request.form.get('smartcard_no', '') }}"
+                        required
+                    >
+                </div>
+
+                <!-- Phone -->
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input
+                        type="text"
+                        name="phone"
+                        id="phone"
+                        class="form-control"
+                        value="{{ request.form.get('phone', current_user.phone if current_user.is_authenticated and current_user.phone else '') }}"
+                        required
+                    >
+                </div>
+
+                <input type="hidden" name="cable_tv_name" id="cable_tv_name">
+                <input type="hidden" name="package_name" id="package_name">
+                <input type="hidden" name="amount" id="amount">
+
+                <button type="submit" class="btn btn-primary w-100">
+                    Verify Smartcard
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const packagesByProvider = {{ packages_by_provider|tojson|safe }};
+    console.log("PACKAGES BY PROVIDER:", packagesByProvider);
+
+    const providerSelect = document.getElementById("cable_tv");
+    const packageSelect = document.getElementById("package");
+    const oldPackage = "{{ request.form.get('package', '') }}";
+
+    function loadPackages(providerCode, selectedPackage = "") {
+        packageSelect.innerHTML = '<option value="">Select package</option>';
+
+        if (!providerCode || !packagesByProvider[providerCode]) {
+            return;
+        }
+
+        const packages = packagesByProvider[providerCode];
+
+        packages.forEach(pkg => {
+            const option = document.createElement("option");
+
+            /*
+             Support different possible backend keys:
+             - package_id
+             - package_code
+             - id
+            */
+            const packageValue =
+                pkg.package_id ||
+                pkg.package_code ||
+                pkg.id ||
+                "";
+
+            /*
+             Support different possible package name keys:
+             - package_name
+             - name
+             - product_name
+            */
+            const packageName =
+                pkg.package_name ||
+                pkg.name ||
+                pkg.product_name ||
+                "Unnamed Package";
+
+            /*
+             Support different amount keys:
+             - amount
+             - price
+             - package_amount
+            */
+            const packageAmount =
+                pkg.amount ||
+                pkg.price ||
+                pkg.package_amount ||
+                "";
+
+            option.value = packageValue;
+            option.textContent = packageAmount
+                ? `${packageName} - ₦${Number(packageAmount).toLocaleString()}`
+                : packageName;
+
+            if (selectedPackage && selectedPackage === packageValue) {
+                option.selected = true;
+            }
+
+            packageSelect.appendChild(option);
+        });
+    }
+
+    providerSelect.addEventListener("change", function () {
+        loadPackages(this.value);
+    });
+
+    // Auto-load packages if provider already selected (important after form reload)
+    window.addEventListener("DOMContentLoaded", function () {
+        if (providerSelect.value) {
+            loadPackages(providerSelect.value, oldPackage);
+        }
+    });
+
+</script>
+{% endblock %}

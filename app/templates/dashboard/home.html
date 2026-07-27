@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    {% include "partials/header.html" %}
+
+    {% include "partials/banner.html" %}
+
+    {% include "partials/wallet_card.html" %}
+
+    {% include "partials/announcement.html" %}
+
+    {% include "partials/virtual_account.html" %}
+
+    {% include "partials/quick_services.html" %}
+
+    {% include "partials/statistics.html" %}
+
+    {% include "partials/recent_transactions.html" %}
+
+    {% include "partials/referral.html" %}
+
+</div>
+
+{% block extra_js %}
+
+<script>
+function toggleBalance() {
+
+    const balance = document.getElementById("walletBalance");
+    const icon = document.getElementById("eyeIcon");
+
+    if (!balance || !icon) {
+        return;
+    }
+
+    if (balance.dataset.hidden === "true") {
+
+        balance.textContent =
+            "₦{{ '{:,.2f}'.format(current_user.wallet_balance or 0) }}";
+
+        icon.classList.remove("bi-eye-slash");
+        icon.classList.add("bi-eye");
+
+        balance.dataset.hidden = "false";
+
+    } else {
+
+        balance.textContent = "₦ ********";
+
+        icon.classList.remove("bi-eye");
+        icon.classList.add("bi-eye-slash");
+
+        balance.dataset.hidden = "true";
+    }
+}
+</script>
+
+{% endblock %}
+
+{% endblock %}

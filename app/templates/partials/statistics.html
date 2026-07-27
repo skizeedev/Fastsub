@@ -1,0 +1,59 @@
+<div class="row mb-4">
+
+<div class="col-md-4 mb-3">
+
+<div class="card shadow-sm border-0">
+
+<div class="card-body">
+
+<small>Total Transactions</small>
+
+<h3>{{ total_transactions }}</h3>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-4 mb-3">
+
+<div class="card shadow-sm border-0">
+
+<div class="card-body">
+
+<small>Total Spent</small>
+
+<h3>
+
+₦{{ "{:,.2f}".format(current_user.total_spent or 0) }}
+
+</h3>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-4 mb-3">
+
+<div class="card shadow-sm border-0">
+
+<div class="card-body">
+
+<small>Referral Earnings</small>
+
+<h3>
+
+₦{{ "{:,.2f}".format(current_user.referral_earnings or 0) }}
+
+</h3>
+
+</div>
+
+</div>
+
+</div>
+
+</div>

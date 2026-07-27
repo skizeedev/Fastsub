@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Wallet Funding History</h1>
+
+{% if transactions %}
+
+    {% for tx in transactions %}
+
+        <p>
+            ₦{{ tx.amount }}
+            |
+            {{ tx.status }}
+            |
+            {{ tx.reference }}
+        </p>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>No wallet transactions yet.</p>
+
+{% endif %}
+
+{% endblock %}

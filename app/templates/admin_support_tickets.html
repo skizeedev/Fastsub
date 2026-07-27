@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Support Tickets</h2>
+
+    {% if tickets %}
+        <div class="table-responsive mt-3">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User ID</th>
+                        <th>Subject</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in tickets %}
+                    <tr>
+                        <td>#{{ ticket.id }}</td>
+                        <td>{{ ticket.user_id }}</td>
+                        <td>{{ ticket.subject }}</td>
+                        <td>{{ ticket.status }}</td>
+                        <td>{{ ticket.created_at.strftime('%d %b %Y %I:%M %p') }}</td>
+                        <td>
+                            <a href="{{ url_for('admin.admin_support_chat', ticket_id=ticket.id) }}"
+                               class="btn btn-sm btn-primary">
+                                Open Chat
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-3">
+            No support tickets yet.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

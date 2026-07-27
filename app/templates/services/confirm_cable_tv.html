@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h3 class="mb-4">Confirm Cable TV Subscription</h3>
+
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold">Cable Provider</div>
+                <div class="col-md-8">{{ cable_tv_name }}</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold">Package</div>
+                <div class="col-md-8">{{ package_name }}</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold">Smartcard / IUC Number</div>
+                <div class="col-md-8">{{ smartcard_no }}</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold">Customer Name</div>
+                <div class="col-md-8">{{ customer_name }}</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold">Amount</div>
+                <div class="col-md-8">₦{{ "{:,.0f}".format(amount|float) }}</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold">Phone Number</div>
+                <div class="col-md-8">{{ phone }}</div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-4 fw-bold">Verification Status</div>
+                <div class="col-md-8 text-success">{{ verification_status }}</div>
+            </div>
+
+            <form method="POST"
+                  action="{{ url_for('auth.confirm_cable_tv') }}">
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}">
+
+                <input type="hidden" name="cable_tv" value="{{ cable_tv_code }}">
+                <input type="hidden" name="cable_tv_name" value="{{ cable_tv_name }}">
+                <input type="hidden" name="package_code" value="{{ package_code }}">
+                <input type="hidden" name="package_name" value="{{ package_name }}">
+                <input type="hidden" name="smartcard_no" value="{{ smartcard_no }}">
+                <input type="hidden" name="phone" value="{{ phone }}">
+                <input type="hidden" name="amount" value="{{ amount }}">
+                <input type="hidden" name="customer_name" value="{{ customer_name }}">
+
+                <button type="submit" id="submitBtn" class="btn btn-primary w-100">
+                    Confirm Subscription
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+document.querySelector("form").addEventListener("submit",function(){
+
+const btn=document.getElementById("submitBtn");
+
+btn.disabled=true;
+
+btn.innerHTML="Processing...";
+
+});
+
+</script>
+{% endblock %}

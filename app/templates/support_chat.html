@@ -1,0 +1,19 @@
+<h2>
+    {{ ticket.subject }}
+</h2>
+
+{% for message in messages %}
+
+<div>
+
+    <strong>
+        {{ message.sender_type }}
+    </strong>
+
+    <p>
+        {{ message.message }}
+    </p>
+
+</div>
+
+{% endfor %}

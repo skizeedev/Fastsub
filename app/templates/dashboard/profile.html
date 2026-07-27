@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Profile</h3>
+
+<p>Username: {{ current_user.username }}</p>
+
+<p>Email: {{ current_user.email }}</p>
+
+<p>Referral Code: {{ current_user.referral_code }}</p>
+
+<p>Wallet Balance:
+₦{{ "{:,.2f}".format(current_user.wallet_balance or 0) }}
+</p>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <h5>Your Referral Code</h5>
+
+        <h3>
+            {{ current_user.referral_code }}
+        </h3>
+
+        <p>
+            Share this code and earn rewards.
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

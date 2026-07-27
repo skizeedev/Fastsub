@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Data Plans</h2>
+
+<form method="POST">
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}">
+
+
+    <input
+        type="text"
+        name="search"
+        value="{{ search }}"
+        placeholder="Search plan..."
+    >
+
+    <button type="submit">
+        Search
+    </button>
+
+</form>
+
+<br>
+
+<p>
+    Total Plans:
+    {{ plans|length }}
+</p>
+
+<a href="{{ url_for('admin.add_data_plan') }}">
+<button>
+    Add New Plan
+</button>
+</a>
+
+<a
+href="{{ url_for('admin.sync_data') }}"
+class="btn"
+>
+<button>
+Sync ClubKonnect Plans
+</button>
+</a>
+
+<br><br>
+
+<table border="1" cellpadding="10">
+
+    <tr>
+        <th>Network</th>
+        <th>Plan</th>
+        <th>Cost</th>
+        <th>Selling</th>
+        <th>Profit</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+
+    {% for plan in plans %}
+
+    <tr>
+
+        <td>{{ plan.network }}</td>
+
+        <td>{{ plan.plan_name }}</td>
+
+        <td>₦{{ plan.cost_price }}</td>
+
+        <td>₦{{ plan.selling_price }}</td>
+
+        <td>
+            ₦{{ plan.selling_price - plan.cost_price }}
+        </td>
+
+        <td>
+            {% if plan.active %}
+                Active
+            {% else %}
+                Disabled
+            {% endif %}
+        </td>
+
+        <td>
+
+            <a
+            href="{{ url_for(
+                'admin.edit_data_plan',
+            id=plan.id
+            ) }}">
+                Edit
+            </a>
+
+            <a href="{{ url_for(
+                'admin.delete_data_plan',
+                id=plan.id
+            ) }}">
+                Delete
+            </a>
+
+            <a href="{{
+            url_for(
+            'admin.toggle_data_plan',
+            id=plan.id
+            )
+            }}">
+                {% if plan.active %}
+                    Disable
+                {% else %}
+                    Enable
+                {% endif %}
+            </a>
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% endblock %}

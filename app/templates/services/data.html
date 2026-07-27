@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Buy Data</h1>
+
+<form method="POST">
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}">
+
+
+    <label>Network</label>
+
+    <select id="network">
+
+        <option value="">
+            Select Network
+        </option>
+
+        {% for network in networks %}
+
+        <option value="{{ network[0] }}">
+            {{ network[0] }}
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <br><br>
+
+    <label>Plan</label>
+
+    <select
+        name="plan"
+        id="plan"
+        required
+    >
+
+        <option value="">
+            Select Plan
+        </option>
+
+        {% for plan in plans %}
+
+        <option
+            value="{{ plan.id }}"
+            data-network="{{ plan.network }}"
+        >
+            {{ plan.plan_name }}
+            - ₦{{ plan.selling_price }}
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <br><br>
+
+    <label>Phone Number</label>
+
+    <input
+        type="text"
+        name="phone"
+        required
+    >
+
+    <br><br>
+
+    <button type="submit">
+        Continue
+    </button>
+
+</form>
+
+<script>
+
+const networkSelect =
+document.getElementById(
+    "network"
+);
+
+const planSelect =
+document.getElementById(
+    "plan"
+);
+
+networkSelect.addEventListener(
+    "change",
+    function(){
+
+        const selected =
+        this.value;
+
+        Array.from(
+            planSelect.options
+        ).forEach(option => {
+
+            if(
+                option.value === ""
+            ){
+                return;
+            }
+
+            if(
+                option.dataset.network
+                === selected
+            ){
+                option.hidden = false;
+            }
+            else{
+                option.hidden = true;
+            }
+
+        });
+
+        planSelect.value = "";
+
+    }
+);
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,1165 @@
+/* =========================================================
+   FASTSUB.NG — MAIN STYLESHEET
+   Cleaned & Unified Version
+   ========================================================= */
+
+
+/* =========================================================
+   1. BRAND VARIABLES
+   ========================================================= */
+
+:root {
+    --fastsub-blue: #001f7a;
+    --fastsub-blue-light: #0d6efd;
+    --fastsub-orange: #ff6600;
+
+    --fastsub-bg: #f5f7fb;
+    --fastsub-white: #ffffff;
+    --fastsub-dark: #1a1a1a;
+    --fastsub-muted: #777f90;
+
+    --fastsub-radius: 16px;
+
+    --fastsub-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.08);
+
+    --fastsub-shadow-hover:
+        0 12px 30px rgba(0, 0, 0, 0.14);
+}
+
+
+/* =========================================================
+   2. GLOBAL
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+
+    background: var(--fastsub-bg);
+
+    color: var(--fastsub-dark);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    padding-bottom: 90px;
+}
+
+
+/* =========================================================
+   3. NAVBAR
+   ========================================================= */
+
+.fastsub-navbar {
+    background: var(--fastsub-blue);
+
+    padding: 12px 15px;
+
+    box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.12);
+
+    position: relative;
+
+    z-index: 1000;
+}
+
+.fastsub-navbar .navbar-brand img {
+    width: 180px;
+
+    max-width: 100%;
+
+    height: auto;
+
+    object-fit: contain;
+}
+
+.fastsub-navbar .nav-link {
+    color: #ffffff !important;
+
+    font-weight: 500;
+
+    transition:
+        color 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.fastsub-navbar .nav-link:hover {
+    opacity: 0.75;
+}
+
+.fastsub-navbar .nav-link.text-warning {
+    color: #ffc107 !important;
+}
+
+.fastsub-navbar .nav-link.text-danger {
+    color: #ff7b7b !important;
+}
+
+
+/* =========================================================
+   4. HEADINGS
+   ========================================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--fastsub-blue);
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   5. CARDS
+   ========================================================= */
+
+.card {
+    background: var(--fastsub-white);
+
+    border: none;
+
+    border-radius: var(--fastsub-radius);
+
+    box-shadow: var(--fastsub-shadow);
+
+    overflow: hidden;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: var(--fastsub-shadow-hover);
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-header {
+    background: transparent;
+
+    border-bottom:
+        1px solid rgba(0, 0, 0, 0.06);
+
+    font-weight: 600;
+
+    color: var(--fastsub-blue);
+
+    padding: 16px 20px;
+}
+
+
+/* =========================================================
+   6. BUTTONS
+   ========================================================= */
+
+.btn {
+    border-radius: 10px;
+
+    font-weight: 600;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background: var(--fastsub-blue-light);
+
+    color: #ffffff;
+
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #0056d6;
+
+    color: #ffffff;
+}
+
+.btn-success {
+    background: var(--fastsub-orange);
+
+    color: #ffffff;
+
+    border: none;
+}
+
+.btn-success:hover {
+    background: #e85b00;
+
+    color: #ffffff;
+}
+
+.btn-warning {
+    border: none;
+}
+
+.btn-danger {
+    border: none;
+}
+
+
+/* =========================================================
+   7. TABLES
+   ========================================================= */
+
+.table {
+    background: var(--fastsub-white);
+
+    margin-bottom: 0;
+
+    vertical-align: middle;
+}
+
+.table th {
+    background: var(--fastsub-blue);
+
+    color: #ffffff;
+
+    font-weight: 600;
+
+    border: none;
+}
+
+.table td {
+    border-color:
+        rgba(0, 0, 0, 0.06);
+}
+
+.table-hover tbody tr:hover {
+    background: #f5f8ff;
+}
+
+
+/* =========================================================
+   8. WALLET CARD
+   ========================================================= */
+
+.wallet-card {
+    background:
+        linear-gradient(
+            135deg,
+            #0056d2,
+            #008cff
+        );
+
+    padding: 30px;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 12px 30px
+        rgba(0, 86, 210, 0.25);
+
+    color: #ffffff;
+}
+
+.wallet-card h2 {
+    color: #ffffff;
+
+    font-size: 34px;
+
+    font-weight: 700;
+}
+
+.wallet-card .btn {
+    border-radius: 12px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   9. SERVICE CARDS
+   ========================================================= */
+
+.service-card {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    height: 100%;
+
+    min-height: 150px;
+
+    padding: 20px;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    text-align: center;
+
+    text-decoration: none;
+
+    color: var(--fastsub-dark);
+
+    box-shadow: var(--fastsub-shadow);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        color 0.25s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+
+    color: var(--fastsub-blue-light);
+
+    box-shadow: var(--fastsub-shadow-hover);
+}
+
+.service-card h6 {
+    margin-bottom: 5px;
+
+    font-weight: 700;
+
+    color: inherit;
+}
+
+.service-card small {
+    color: var(--fastsub-muted);
+}
+
+.service-card span {
+    font-size: 14px;
+
+    font-weight: 600;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   10. SERVICE ICON
+   ========================================================= */
+
+.service-icon,
+.service-image {
+    width: 68px;
+
+    height: 68px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin: 0 auto 12px;
+
+    border-radius: 20px;
+
+    color: #ffffff;
+
+    font-size: 28px;
+
+    box-shadow:
+        0 8px 20px
+        rgba(0, 0, 0, 0.12);
+}
+
+
+/* =========================================================
+   11. SERVICE COLORS
+   ========================================================= */
+
+.data {
+    background: #00b894;
+}
+
+.electric {
+    background: #f39c12;
+}
+
+.tv {
+    background: #6c5ce7;
+}
+
+.betting {
+    background: #2d3436;
+}
+
+.recharge {
+    background: #0984e3;
+}
+
+.school {
+    background: #8e44ad;
+}
+
+.more {
+    background: #636e72;
+}
+
+
+/* =========================================================
+   12. GRADIENTS
+   ========================================================= */
+
+.gradient-blue {
+    background:
+        linear-gradient(
+            135deg,
+            #0d6efd,
+            #4dabff
+        );
+}
+
+.gradient-green {
+    background:
+        linear-gradient(
+            135deg,
+            #198754,
+            #4cd964
+        );
+}
+
+.gradient-yellow {
+    background:
+        linear-gradient(
+            135deg,
+            #ffc107,
+            #ff9800
+        );
+}
+
+.gradient-red {
+    background:
+        linear-gradient(
+            135deg,
+            #dc3545,
+            #ff6b6b
+        );
+}
+
+.gradient-dark {
+    background:
+        linear-gradient(
+            135deg,
+            #343a40,
+            #6c757d
+        );
+}
+
+.gradient-cyan {
+    background:
+        linear-gradient(
+            135deg,
+            #0dcaf0,
+            #3dd5f3
+        );
+}
+
+.gradient-purple {
+    background:
+        linear-gradient(
+            135deg,
+            #6f42c1,
+            #9b5de5
+        );
+}
+
+.gradient-orange {
+    background:
+        linear-gradient(
+            135deg,
+            #fd7e14,
+            #ffb347
+        );
+}
+
+
+/* =========================================================
+   13. BANNER
+   ========================================================= */
+
+.banner-card {
+    padding: 35px;
+
+    border-radius: 20px;
+
+    color: #ffffff;
+
+    min-height: 170px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    box-shadow:
+        0 10px 25px
+        rgba(0, 0, 0, 0.12);
+}
+
+.banner-card h3 {
+    color: #ffffff;
+
+    font-weight: 700;
+}
+
+.banner-card p {
+    font-size: 16px;
+
+    margin-top: 10px;
+}
+
+.banner-blue {
+    background:
+        linear-gradient(
+            135deg,
+            #0052d4,
+            #4364f7,
+            #6fb1fc
+        );
+}
+
+.banner-green {
+    background:
+        linear-gradient(
+            135deg,
+            #11998e,
+            #38ef7d
+        );
+}
+
+.banner-orange {
+    background:
+        linear-gradient(
+            135deg,
+            #ff8008,
+            #ffc837
+        );
+}
+
+
+/* =========================================================
+   14. MOBILE BOTTOM NAVIGATION
+   ========================================================= */
+
+.fastsub-bottom-nav {
+    position: fixed;
+
+    bottom: 0;
+
+    left: 0;
+
+    right: 0;
+
+    height: 72px;
+
+    background: #ffffff;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-around;
+
+    padding: 0 10px;
+
+    border-top:
+        1px solid
+        rgba(0, 0, 0, 0.06);
+
+    box-shadow:
+        0 -5px 20px
+        rgba(0, 0, 0, 0.08);
+
+    z-index: 1050;
+}
+
+
+/* NAV ITEMS */
+
+.fastsub-bottom-item {
+    flex: 1;
+
+    height: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 4px;
+
+    text-decoration: none;
+
+    color: #8b93a7;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.fastsub-bottom-item i {
+    font-size: 20px;
+
+    line-height: 1;
+}
+
+.fastsub-bottom-item:hover {
+    color: var(--fastsub-blue-light);
+
+    transform: translateY(-2px);
+}
+
+.fastsub-bottom-item.active {
+    color: var(--fastsub-blue-light);
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   15. CENTER QUICK ACTION
+   ========================================================= */
+
+.fastsub-bottom-center {
+    width: 82px;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    position: relative;
+}
+
+.fastsub-quick-btn {
+    width: 58px;
+
+    height: 58px;
+
+    position: absolute;
+
+    bottom: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    border: 5px solid #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0056d2,
+            #008cff
+        );
+
+    color: #ffffff;
+
+    font-size: 25px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 20px
+        rgba(0, 86, 210, 0.35);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.fastsub-quick-btn:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 12px 25px
+        rgba(0, 86, 210, 0.45);
+}
+
+.fastsub-quick-btn:active {
+    transform: scale(0.92);
+}
+
+
+/* =========================================================
+   16. QUICK SERVICES PANEL
+   ========================================================= */
+
+.fastsub-quick-actions {
+    position: fixed;
+
+    bottom: 84px;
+
+    left: 50%;
+
+    width: min(92%, 420px);
+
+    transform: translateX(-50%);
+
+    z-index: 1049;
+}
+
+.fastsub-quick-card {
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    padding: 18px;
+
+    border:
+        1px solid
+        rgba(0, 0, 0, 0.06);
+
+    box-shadow:
+        0 10px 35px
+        rgba(0, 0, 0, 0.15);
+}
+
+.fastsub-quick-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 15px;
+
+    color: var(--fastsub-blue);
+
+    font-size: 16px;
+}
+
+.fastsub-quick-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, 1fr);
+
+    gap: 10px;
+}
+
+.fastsub-quick-item {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 12px 5px;
+
+    border-radius: 12px;
+
+    background: #f5f7fb;
+
+    color: #333333;
+
+    text-decoration: none;
+
+    font-size: 11px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.fastsub-quick-item i {
+    font-size: 20px;
+
+    color: var(--fastsub-blue-light);
+}
+
+.fastsub-quick-item:hover {
+    background: var(--fastsub-blue-light);
+
+    color: #ffffff;
+
+    transform: translateY(-3px);
+}
+
+.fastsub-quick-item:hover i {
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   17. FOOTER
+   ========================================================= */
+
+.fastsub-footer {
+    background: var(--fastsub-blue);
+
+    color: #ffffff;
+
+    padding: 20px;
+
+    margin-top: 40px;
+}
+
+.fastsub-footer p {
+    margin-bottom: 5px;
+}
+
+
+/* =========================================================
+   18. FLASH MESSAGES
+   ========================================================= */
+
+.alert {
+    border-radius: 12px;
+
+    border: none;
+
+    box-shadow:
+        0 3px 12px
+        rgba(0, 0, 0, 0.06);
+}
+
+
+/* =========================================================
+   19. DESKTOP
+   ========================================================= */
+
+@media (min-width: 992px) {
+
+    .fastsub-bottom-nav,
+    .fastsub-quick-actions {
+        display: none !important;
+    }
+
+    body {
+        padding-bottom: 0;
+    }
+
+}
+
+
+/* =========================================================
+   20. MOBILE
+   ========================================================= */
+
+@media (max-width: 991px) {
+
+    .fastsub-navbar .navbar-brand img {
+        width: 150px;
+    }
+
+    .fastsub-quick-grid {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+
+}
+
+
+/* =========================================================
+   21. SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+    .fastsub-bottom-nav {
+        padding: 0 5px;
+    }
+
+    .fastsub-bottom-item {
+        font-size: 9px;
+    }
+
+    .fastsub-bottom-item i {
+        font-size: 18px;
+    }
+
+    .fastsub-bottom-center {
+        width: 65px;
+    }
+
+    .fastsub-quick-btn {
+        width: 52px;
+
+        height: 52px;
+
+        font-size: 22px;
+    }
+
+}
+
+
+/* =========================================================
+   22. ACCESSIBILITY
+   ========================================================= */
+
+button:focus-visible,
+a:focus-visible {
+    outline:
+        3px solid
+        rgba(13, 110, 253, 0.35);
+
+    outline-offset: 3px;
+}
+
+/* =========================================
+   FASTSUB QUICK ACTION FINAL OVERRIDE
+========================================= */
+
+.fastsub-quick-actions {
+    position: fixed !important;
+    bottom: 82px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+
+    width: min(92vw, 420px) !important;
+
+    z-index: 1049 !important;
+}
+
+
+/* Bootstrap collapse hidden state */
+
+.fastsub-quick-actions:not(.show) {
+    display: none !important;
+}
+
+
+/* Bootstrap collapse visible state */
+
+.fastsub-quick-actions.show {
+    display: block !important;
+}
+
+
+/* Quick card */
+
+.fastsub-quick-card {
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    padding: 18px;
+
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.15);
+
+    border:
+        1px solid rgba(0, 0, 0, 0.06);
+}
+
+
+/* Header */
+
+.fastsub-quick-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 15px;
+
+    font-size: 16px;
+}
+
+
+/* Grid */
+
+.fastsub-quick-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, 1fr);
+
+    gap: 10px;
+}
+
+
+/* Quick items */
+
+.fastsub-quick-item {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 12px 5px;
+
+    border-radius: 12px;
+
+    background: #f5f7fb;
+
+    color: #333;
+
+    text-decoration: none;
+
+    font-size: 11px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+/* Icons */
+
+.fastsub-quick-item i {
+    font-size: 22px;
+
+    color: #0d6efd;
+}
+
+
+/* Hover */
+
+.fastsub-quick-item:hover {
+    background: #0d6efd;
+
+    color: #ffffff;
+
+    transform: translateY(-3px);
+}
+
+
+.fastsub-quick-item:hover i {
+    color: #ffffff;
+}
+
+
+/* =========================================
+   QUICK ACTION BUTTON
+========================================= */
+
+.fastsub-quick-btn {
+    width: 58px;
+
+    height: 58px;
+
+    border-radius: 50%;
+
+    border: 5px solid #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0d6efd,
+            #0062ff
+        );
+
+    color: #ffffff;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 25px;
+
+    box-shadow:
+        0 6px 18px
+        rgba(13, 110, 253, 0.35);
+
+    cursor: pointer;
+
+    position: absolute;
+
+    bottom: 18px;
+
+    z-index: 1051;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.fastsub-quick-btn:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 10px 25px
+        rgba(13, 110, 253, 0.45);
+}
+
+
+.fastsub-quick-btn:active {
+    transform: scale(0.92);
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 991px) {
+
+    .fastsub-quick-grid {
+        grid-template-columns:
+            repeat(5, 1fr);
+    }
+
+}
+
+
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media (max-width: 400px) {
+
+    .fastsub-quick-grid {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+
+    .fastsub-quick-actions {
+        width: 94vw !important;
+    }
+
+}

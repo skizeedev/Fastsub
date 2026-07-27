@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <a href="{{ url_for('admin.admin_support') }}" class="btn btn-secondary mb-3">
+        ← Back to Tickets
+    </a>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h3>Ticket #{{ ticket.id }}</h3>
+            <p><strong>User ID:</strong> {{ ticket.user_id }}</p>
+            <p><strong>Subject:</strong> {{ ticket.subject }}</p>
+            <p><strong>Status:</strong> {{ ticket.status }}</p>
+            <p><strong>Created:</strong> {{ ticket.created_at.strftime('%d %b %Y %I:%M %p') }}</p>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            Conversation
+        </div>
+        <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+            {% if messages %}
+                {% for msg in messages %}
+                    <div class="mb-3 p-3 rounded {% if msg.sender_type == 'admin' %}bg-primary text-white{% else %}bg-light{% endif %}">
+                        <strong>
+                            {% if msg.sender_type == "admin" %}
+                                Admin
+                            {% else %}
+                                User
+                            {% endif %}
+                        </strong>
+                        <br>
+                        {{ msg.message }}
+                        <br>
+                        <small>{{ msg.created_at.strftime('%d %b %Y %I:%M %p') }}</small>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No messages yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            Reply to Ticket
+        </div>
+        <div class="card-body">
+            <form method="POST">
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}">
+
+                <div class="mb-3">
+                    <label class="form-label">Reply Message</label>
+                    <textarea
+                        name="message"
+                        class="form-control"
+                        rows="5"
+                        placeholder="Type your reply..."
+                    ></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Ticket Status</label>
+                    <select name="status" class="form-select">
+                        <option value="open" {% if ticket.status == 'open' %}selected{% endif %}>Open</option>
+                        <option value="replied" {% if ticket.status == 'replied' %}selected{% endif %}>Replied</option>
+                        <option value="closed" {% if ticket.status == 'closed' %}selected{% endif %}>Closed</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    Send Reply
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

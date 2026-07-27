@@ -1,0 +1,166 @@
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <h5 class="fw-bold mb-0">
+                <i class="fas fa-university text-primary"></i>
+                Dedicated Virtual Account
+            </h5>
+
+            <span class="badge bg-success">
+                Active
+            </span>
+
+        </div>
+
+        {% if current_user.account_number %}
+
+        <div class="row">
+
+            <div class="col-md-8">
+
+                <small class="text-muted">
+                    Bank
+                </small>
+
+                <h6 class="fw-bold">
+                    {{ current_user.bank_name }}
+                </h6>
+
+                <small class="text-muted">
+                    Account Number
+                </small>
+
+                <h3
+                    class="fw-bold text-primary"
+                    id="accountNumber">
+
+                    {{ current_user.account_number }}
+
+                </h3>
+
+                <small class="text-muted">
+                    Account Name
+                </small>
+
+                <h6>
+
+                    {{ current_user.account_name }}
+
+                </h6>
+
+            </div>
+
+            <div class="col-md-4 d-grid gap-2">
+
+                <button
+                    class="btn btn-primary"
+                    onclick="copyAccount()">
+
+                    <i class="fas fa-copy"></i>
+
+                    Copy Account
+
+                </button>
+
+                <button
+                    class="btn btn-outline-success"
+                    data-bs-toggle="modal"
+                    data-bs-target="#cardFundingModal">
+
+                    <i class="fas fa-credit-card"></i>
+
+                    Fund With Card
+
+                </button>
+
+                <div
+                class="modal fade"
+                id="cardFundingModal"
+                tabindex="-1">
+
+                <div class="modal-dialog">
+
+                <div class="modal-content">
+
+                <div class="modal-header">
+
+                <h5>
+
+                Fund Wallet
+
+                </h5>
+
+                <button
+                class="btn-close"
+                data-bs-dismiss="modal">
+                </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                <form method="POST">
+
+                    <input
+                        type="hidden"
+                        name="csrf_token"
+                        value="{{ csrf_token() }}">
+
+                action="{{ url_for('auth.fund_wallet') }}"
+
+                <div class="mb-3">
+
+                <label>
+
+                Amount
+
+                </label>
+
+                <input
+                type="number"
+                name="amount"
+                class="form-control"
+                placeholder="Minimum ₦100"
+                required>
+
+                </div>
+
+                <button
+                class="btn btn-primary w-100">
+
+                Continue To Paystack
+
+                </button>
+
+                </form>
+
+                </div>
+
+                </div>
+
+                </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <div class="alert alert-warning">
+
+            Your dedicated account is still being generated.
+
+            Please refresh this page in a few moments.
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>

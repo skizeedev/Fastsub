@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="card shadow-lg border-0">
+
+        <div class="card-body">
+
+            <div class="text-center">
+
+                <img src="{{ url_for('static', filename='images/logo.jpg') }}"
+                     width="70"
+                     class="mb-3">
+
+                <h3 class="fw-bold">
+                    FastSub
+                </h3>
+
+                {% if transaction.status == "success" %}
+
+                    <div class="text-success fs-1">
+                        ✓
+                    </div>
+
+                    <h4 class="text-success">
+                        Transaction Successful
+                    </h4>
+
+                {% elif transaction.status == "pending" %}
+
+                    <div class="text-warning fs-1">
+                        ⏳
+                    </div>
+
+                    <h4 class="text-warning">
+                        Transaction Pending
+                    </h4>
+
+                {% else %}
+
+                    <div class="text-danger fs-1">
+                        ✕
+                    </div>
+
+                    <h4 class="text-danger">
+                        Transaction Failed
+                    </h4>
+
+                {% endif %}
+
+            </div>
+
+            <hr>
+
+            <table class="table table-borderless">
+
+                <tr>
+                    <th>Service</th>
+                    <td>{{ transaction.service_type|replace("_"," ")|title }}</td>
+                </tr>
+
+                {% if transaction.network %}
+                <tr>
+                    <th>Network</th>
+                    <td>{{ transaction.network }}</td>
+                </tr>
+                {% endif %}
+
+                {% if transaction.product_name %}
+                <tr>
+                    <th>Product</th>
+                    <td>{{ transaction.product_name }}</td>
+                </tr>
+                {% endif %}
+
+                {% if transaction.package_name %}
+                <tr>
+                    <th>Package</th>
+                    <td>{{ transaction.package_name }}</td>
+                </tr>
+                {% endif %}
+
+                {% if transaction.customer_name %}
+                <tr>
+                    <th>Customer</th>
+                    <td>{{ transaction.customer_name }}</td>
+                </tr>
+                {% endif %}
+
+                <tr>
+                    <th>Recipient</th>
+                    <td>{{ transaction.recipient }}</td>
+                </tr>
+
+                <tr>
+                    <th>Amount</th>
+                    <td>
+                        <strong>
+                            ₦{{ "{:,.2f}".format(transaction.amount) }}
+                        </strong>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Status</th>
+
+                    <td>
+
+                        {% if transaction.status=="success" %}
+
+                        <span class="badge bg-success">
+                            SUCCESS
+                        </span>
+
+                        {% elif transaction.status=="pending" %}
+
+                        <span class="badge bg-warning text-dark">
+                            PENDING
+                        </span>
+
+                        {% else %}
+
+                        <span class="badge bg-danger">
+                            FAILED
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <th>Reference</th>
+                    <td>{{ transaction.reference }}</td>
+                </tr>
+
+                {% if transaction.provider_reference %}
+                <tr>
+                    <th>Provider Ref</th>
+                    <td>{{ transaction.provider_reference }}</td>
+                </tr>
+                {% endif %}
+
+                {% if transaction.provider_status %}
+                <tr>
+                    <th>Provider Status</th>
+                    <td>{{ transaction.provider_status }}</td>
+                </tr>
+                {% endif %}
+
+                {% if transaction.token %}
+                <tr>
+                    <th>Token</th>
+                    <td class="fw-bold text-success">
+                        {{ transaction.token }}
+                    </td>
+                </tr>
+                {% endif %}
+
+                {% if transaction.units %}
+                <tr>
+                    <th>Units</th>
+                    <td>{{ transaction.units }}</td>
+                </tr>
+                {% endif %}
+
+                <tr>
+                    <th>Date</th>
+                    <td>
+                        {{ transaction.created_at.strftime("%d %B %Y %I:%M %p") }}
+                    </td>
+                </tr>
+
+            </table>
+
+            {% if transaction.status=="failed" %}
+
+            <div class="alert alert-danger">
+
+                <strong>
+                    Transaction Failed
+                </strong>
+
+                <br><br>
+
+                Your wallet has been refunded if your account was debited.
+
+                {% if transaction.provider_response %}
+
+                <hr>
+
+                <small>
+
+                    {{ transaction.provider_response }}
+
+                </small>
+
+                {% endif %}
+
+            </div>
+
+            {% elif transaction.status=="pending" %}
+
+            <div class="alert alert-warning">
+
+                Your transaction is still processing.
+
+            </div>
+
+            {% endif %}
+
+            <div class="d-grid gap-2 mt-4">
+
+                <button
+                    class="btn btn-primary"
+                    onclick="window.print()">
+
+                    Print Receipt
+
+                </button>
+
+                <a
+                    href="{{ url_for('auth.transactions') }}"
+                    class="btn btn-outline-secondary">
+
+                    Back to Transactions
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

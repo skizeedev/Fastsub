@@ -1,0 +1,26 @@
+<h2>Create Support Ticket</h2>
+
+<form method="POST">
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}">
+
+    <input
+        type="text"
+        name="subject"
+        placeholder="Subject"
+        required
+    >
+
+    <textarea
+        name="message"
+        required
+    ></textarea>
+
+    <button type="submit">
+        Submit
+    </button>
+
+</form>

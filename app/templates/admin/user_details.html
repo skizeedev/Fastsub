@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+<div class="card shadow mb-4">
+
+<div class="card-body">
+
+<h3>
+
+{{ user.username }}
+
+</h3>
+
+<p>
+
+{{ user.email }}
+
+</p>
+
+<hr>
+
+<div class="row">
+
+<div class="col-md-3">
+
+<h6>Wallet</h6>
+
+<h4>
+
+₦{{ "{:,.2f}".format(user.wallet_balance) }}
+
+</h4>
+
+</div>
+
+<div class="col-md-3">
+
+<h6>Total Spent</h6>
+
+<h4>
+
+₦{{ "{:,.2f}".format(total_spent) }}
+
+</h4>
+
+</div>
+
+<div class="col-md-3">
+
+<h6>Total Funding</h6>
+
+<h4>
+
+₦{{ "{:,.2f}".format(total_wallet_credit) }}
+
+</h4>
+
+</div>
+
+<div class="col-md-3">
+
+<h6>Status</h6>
+
+{% if user.is_verified %}
+
+<span class="badge bg-success">
+
+Verified
+
+</span>
+
+{% else %}
+
+<span class="badge bg-warning">
+
+Pending
+
+</span>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="card shadow mb-4">
+
+<div class="card-header">
+
+Dedicated Virtual Account
+
+</div>
+
+<div class="card-body">
+
+<p>
+
+<strong>Bank</strong>
+
+<br>
+
+{{ user.bank_name or "Not Assigned" }}
+
+</p>
+
+<p>
+
+<strong>Account Number</strong>
+
+<br>
+
+{{ user.account_number or "-" }}
+
+</p>
+
+<p>
+
+<strong>Account Name</strong>
+
+<br>
+
+{{ user.account_name or "-" }}
+
+</p>
+
+</div>
+
+</div>
+
+<div class="card shadow mb-4">
+
+<div class="card-header">
+
+Quick Actions
+
+</div>
+
+<div class="card-body">
+
+<a
+href="{{ url_for('admin.credit_wallet',user_id=user.id) }}"
+class="btn btn-success">
+
+Credit Wallet
+
+</a>
+
+<a
+href="{{ url_for('admin.debit_wallet',user_id=user.id) }}"
+class="btn btn-warning">
+
+Debit Wallet
+
+</a>
+
+<a
+href="{{ url_for('admin.suspend_user',user_id=user.id) }}"
+class="btn btn-danger">
+
+Suspend
+
+</a>
+
+<a
+href="{{ url_for('admin.activate_user',user_id=user.id) }}"
+class="btn btn-primary">
+
+Activate
+
+</a>
+
+</div>
+
+</div>
+
+<div class="card shadow">
+
+<div class="card-header">
+
+Recent Transactions
+
+</div>
+
+<div class="table-responsive">
+
+<table class="table table-hover">
+
+<thead>
+
+<tr>
+
+<th>Service</th>
+
+<th>Amount</th>
+
+<th>Status</th>
+
+<th>Date</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for transaction in transactions[:15] %}
+
+<tr>
+
+<td>{{ transaction.service_type }}</td>
+
+<td>
+
+₦{{ "{:,.2f}".format(transaction.amount) }}
+
+</td>
+
+<td>{{ transaction.status }}</td>
+
+<td>
+
+{{ transaction.created_at.strftime("%d %b %Y %H:%M") }}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+{% endblock %}

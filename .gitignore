@@ -1,0 +1,36 @@
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Flask
+instance/
+*.db
+*.sqlite
+*.sqlite3
+
+# Backups
+backups/
+fastsub_backups/
+
+# IDEs
+.vscode/
+.idea/
+
+# OS files
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+
+# Local testing
+test_mail.py

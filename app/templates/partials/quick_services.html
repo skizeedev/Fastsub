@@ -1,0 +1,128 @@
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-body">
+
+        <h5 class="fw-bold mb-4">
+            <i class="bi bi-grid-fill text-primary"></i>
+            Quick Services
+        </h5>
+
+        <div class="row g-4">
+
+            <!-- Airtime -->
+            <div class="col-4 col-md-3">
+                <a href="{{ url_for('auth.airtime') }}"
+                   class="service-card">
+
+                   <div class="service-image recharge">
+                        <i class="bi bi-telephone-fill"></i>
+                    </div>
+
+                    <span>Airtime</span>
+
+                </a>
+            </div>
+
+            <!-- Data -->
+            <div class="col-4 col-md-3">
+                <a href="/data"
+                   class="service-card">
+
+                    <div class="service-image data">
+                        <i class="bi bi-wifi"></i>
+                    </div>
+
+                    <span>Data</span>
+
+                </a>
+            </div>
+
+            <!-- Electricity -->
+            <div class="col-4 col-md-3">
+                <a href="{{ url_for('auth.electricity_page') }}"
+                   class="service-card">
+
+                    <div class="service-image electric">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                    </div>
+
+                    <span>Electricity</span>
+
+                </a>
+            </div>
+
+            <!-- Cable TV -->
+            <div class="col-4 col-md-3">
+                <a href="{{ url_for('auth.cable_tv_page') }}"
+                   class="service-card">
+
+                    <div class="service-image tv">
+                        <i class="bi bi-tv-fill"></i>
+                    </div>
+
+                    <span>Cable TV</span>
+
+                </a>
+            </div>
+
+            <!-- Betting -->
+            <div class="col-4 col-md-3">
+                <a href="{{ url_for('auth.betting_page') }}"
+                   class="service-card">
+
+                    <div class="service-image betting">
+                        <i class="bi bi-receipt-cutoff"></i>
+                    </div>
+
+                    <span>Betting</span>
+
+                </a>
+            </div>
+
+            <!-- Recharge Card -->
+            <div class="col-4 col-md-3">
+                <a href="{{ url_for('auth.coming_soon') }}"
+                   class="service-card">
+
+                    <div class="service-image recharge">
+                        <i class="bi bi-credit-card-fill"></i>
+                    </div>
+
+                    <span>Recharge Card</span>
+
+                </a>
+            </div>
+
+            <!-- Education -->
+            <div class="col-4 col-md-3">
+                <a href="{{ url_for('auth.coming_soon') }}"
+                   class="service-card">
+
+                    <div class="service-image school">
+                        <i class="bi bi-mortarboard-fill"></i>
+                    </div>
+
+                    <span>Education</span>
+
+                </a>
+            </div>
+
+            <!-- More -->
+            <div class="col-4 col-md-3">
+                <a href="{{ url_for('auth.coming_soon') }}"
+                   class="service-card">
+
+                    <div class="service-image more">
+                        <i class="bi bi-three-dots"></i>
+                    </div>
+
+                    <span>More</span>
+
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

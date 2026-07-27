@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<div class="card shadow border-0">
+
+<div class="card-body">
+
+<h3 class="mb-4">
+Confirm Betting Payment
+</h3>
+
+<div class="row mb-3">
+
+<div class="col-md-4 fw-bold">
+Betting Company
+</div>
+
+<div class="col-md-8">
+{{ betting_company_name }}
+</div>
+
+</div>
+
+<div class="row mb-3">
+
+<div class="col-md-4 fw-bold">
+Customer ID
+</div>
+
+<div class="col-md-8">
+{{ customer_id }}
+</div>
+
+</div>
+
+<div class="row mb-3">
+
+<div class="col-md-4 fw-bold">
+Customer Name
+</div>
+
+<div class="col-md-8">
+{{ customer_name }}
+</div>
+
+</div>
+
+<div class="row mb-3">
+
+<div class="col-md-4 fw-bold">
+Amount
+</div>
+
+<div class="col-md-8">
+₦{{ "{:,.0f}".format(amount|float) }}
+</div>
+
+</div>
+
+<div class="row mb-3">
+
+<div class="col-md-4 fw-bold">
+Phone Number
+</div>
+
+<div class="col-md-8">
+{{ phone }}
+</div>
+
+</div>
+
+<div class="row mb-4">
+
+<div class="col-md-4 fw-bold">
+Verification
+</div>
+
+<div class="col-md-8 text-success">
+{{ verification_status }}
+</div>
+
+</div>
+
+<form method="POST"
+      action="{{ url_for('auth.confirm_betting') }}">
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}">
+
+<input
+type="hidden"
+name="betting_company"
+value="{{ betting_company }}">
+
+<input
+type="hidden"
+name="betting_company_name"
+value="{{ betting_company_name }}">
+
+<input
+type="hidden"
+name="customer_id"
+value="{{ customer_id }}">
+
+<input
+type="hidden"
+name="customer_name"
+value="{{ customer_name }}">
+
+<input
+type="hidden"
+name="amount"
+value="{{ amount }}">
+
+<input
+type="hidden"
+name="phone"
+value="{{ phone }}">
+
+<button
+type="submit"
+id="submitBtn"
+class="btn btn-primary w-100">
+
+Confirm Purchase
+
+</button>
+
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+document.querySelector("form").addEventListener("submit",function(){
+
+const btn=document.getElementById("submitBtn");
+
+btn.disabled=true;
+
+btn.innerHTML="Processing...";
+
+});
+
+</script>
+
+{% endblock %}

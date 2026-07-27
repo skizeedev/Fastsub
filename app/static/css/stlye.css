@@ -1,0 +1,25 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+.card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.services {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.service-box {
+    border: 1px solid #ddd;
+    padding: 15px;
+    width: 180px;
+    text-align: center;
+    border-radius: 10px;
+}

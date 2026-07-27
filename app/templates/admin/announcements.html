@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<div class="d-flex justify-content-between mb-4">
+
+<h3>
+
+📢 Announcement Manager
+
+</h3>
+
+<a
+class="btn btn-primary"
+href="{{ url_for('admin.add_announcement') }}">
+
+New Announcement
+
+</a>
+
+</div>
+
+<div class="row mb-4">
+
+<div class="col-md-3">
+
+<div class="card shadow">
+
+<div class="card-body text-center">
+
+<h3>
+
+{{ announcements|length }}
+
+</h3>
+
+<p>Total</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card shadow">
+
+<div class="card-body text-center">
+
+<h3>
+
+{{ announcements|selectattr("active")|list|length }}
+
+</h3>
+
+<p>Active</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card shadow">
+
+<div class="card-body text-center">
+
+<h3>
+
+{{ announcements|selectattr("pinned")|list|length }}
+
+</h3>
+
+<p>Pinned</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card shadow">
+
+<div class="card-body text-center">
+
+<h3>
+
+{{ announcements|selectattr("popup")|list|length }}
+
+</h3>
+
+<p>Popup</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<table class="table table-striped">
+
+<thead>
+
+<tr>
+
+<th>Title</th>
+
+<th>Type</th>
+
+<th>Priority</th>
+
+<th>Status</th>
+
+<th>Pinned</th>
+
+<th>Date</th>
+
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for announcement in announcements %}
+
+<tr>
+
+<td>{{ announcement.title }}</td>
+
+<td>
+
+{% if announcement.announcement_type=="promotion" %}
+
+<span class="badge bg-success">
+
+Promotion
+
+</span>
+
+{% elif announcement.announcement_type=="warning" %}
+
+<span class="badge bg-warning">
+
+Warning
+
+</span>
+
+{% elif announcement.announcement_type=="danger" %}
+
+<span class="badge bg-danger">
+
+Danger
+
+</span>
+
+{% elif announcement.announcement_type=="success" %}
+
+<span class="badge bg-primary">
+
+Success
+
+</span>
+
+{% else %}
+
+<span class="badge bg-secondary">
+
+Info
+
+</span>
+
+{% endif %}
+
+</td>
+
+<td>{{ announcement.priority }}</td>
+
+<td>
+
+{% if announcement.active %}
+
+<span class="badge bg-success">
+
+Active
+
+</span>
+
+{% else %}
+
+<span class="badge bg-danger">
+
+Disabled
+
+</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+{% if announcement.pinned %}
+
+📌
+
+{% else %}
+
+—
+
+{% endif %}
+
+</td>
+
+<td>
+
+{{ announcement.created_at.strftime("%d %b %Y") }}
+
+</td>
+
+<td>
+
+<a
+class="btn btn-sm btn-warning"
+href="{{ url_for('admin.edit_announcement',
+announcement_id=announcement.id) }}">
+
+<i class="bi bi-pencil"></i>
+
+</a>
+
+<a
+class="btn btn-sm btn-danger"
+href="{{ url_for('admin.delete_announcement',
+announcement_id=announcement.id) }}">
+
+<i class="bi bi-trash"></i>
+
+</a>
+
+<a
+class="btn btn-sm btn-info"
+href="{{ url_for('admin.pin_announcement',
+announcement_id=announcement.id) }}">
+
+<i class="bi bi-pin-angle-fill"></i>
+
+</a>
+
+<a
+class="btn btn-sm btn-success"
+href="{{ url_for('admin.toggle_announcement',
+announcement_id=announcement.id) }}">
+
+<i class="bi bi-check-circle-fill"></i>
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+{% endblock %}

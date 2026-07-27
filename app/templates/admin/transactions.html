@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form method="GET">
+
+    <input
+        type="text"
+        name="search"
+        class="form-control"
+        placeholder="Search recipient">
+
+    <br>
+
+    <button
+        class="btn btn-primary">
+
+        Search
+
+    </button>
+
+</form>
+
+<br>
+
+<h2>All Transactions</h2>
+
+<table class="table table-bordered">
+
+    <thead>
+
+        <tr>
+
+            <th>ID</th>
+
+            <th>Service</th>
+
+            <th>Recipient</th>
+
+            <th>Amount</th>
+
+            <th>Status</th>
+
+            <th>User</th>
+
+            <th>Reference</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+    {% for transaction in transactions %}
+
+        <tr>
+
+            <td>{{ transaction.id }}</td>
+
+            <td>{{ transaction.service_type }}</td>
+
+            <td>{{ transaction.recipient }}</td>
+
+            <td>₦{{ transaction.amount }}</td>
+
+            <td>{{ transaction.status }}</td>
+
+            <td>{{ transaction.user_id }}</td>
+
+            <td>{{ transaction.reference }}</td>
+
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

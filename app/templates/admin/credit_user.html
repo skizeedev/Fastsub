@@ -1,0 +1,51 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Credit Wallet</h2>
+
+<p>
+
+    User:
+
+    {{ user.username }}
+
+</p>
+
+<p>
+
+    Current Balance:
+
+    ₦{{ user.wallet_balance }}
+
+</p>
+
+<form method="POST">
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}">
+
+
+    <label>Amount</label>
+
+    <input
+        type="number"
+        name="amount"
+        class="form-control"
+        required>
+
+    <br>
+
+    <button
+        class="btn btn-success">
+
+        Credit Wallet
+
+    </button>
+
+</form>
+
+{% endblock %}

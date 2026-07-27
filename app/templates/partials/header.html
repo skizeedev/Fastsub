@@ -1,0 +1,36 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <small class="text-muted">
+            Welcome Back 👋
+        </small>
+
+        <h3 class="fw-bold mb-0">
+            {{ current_user.username }}
+        </h3>
+
+    </div>
+
+    <div class="d-flex align-items-center">
+
+        <a href="#" class="position-relative me-3 text-dark">
+
+            <i class="fas fa-bell fa-lg"></i>
+
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                0
+            </span>
+
+        </a>
+
+        <img
+            src="{{ url_for('static', filename='images/default-avatar.png') }}"
+            class="rounded-circle border"
+            width="45"
+            height="45"
+            alt="Profile">
+
+    </div>
+
+</div>

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Confirm Purchase</h2>
+
+<p>
+Network:
+{{ plan.network }}
+</p>
+
+<p>
+Plan:
+{{ plan.plan_name }}
+</p>
+
+<p>
+Phone:
+{{ phone }}
+</p>
+
+<p>
+Amount:
+₦{{ plan.selling_price }}
+</p>
+
+<form method="POST"
+      action="{{ url_for('auth.confirm_data') }}">
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}">
+
+    <input
+        type="hidden"
+        name="plan_id"
+        value="{{ plan.id }}"
+    >
+
+    <input
+        type="hidden"
+        name="phone"
+        value="{{ phone }}"
+    >
+
+    <button type="submit" id="submitBtn" class="btn btn-primary w-100">
+        Confirm Purchase
+    </button>
+
+</form>
+
+<script>
+
+document.querySelector("form").addEventListener("submit",function(){
+
+const btn=document.getElementById("submitBtn");
+
+btn.disabled=true;
+
+btn.innerHTML="Processing...";
+
+});
+
+</script>
+
+{% endblock %}

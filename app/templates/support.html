@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="max-width: 1000px; margin: 30px auto;">
+
+    <h2>Support Center</h2>
+    <p>If you have any issue with data, airtime, wallet, or any transaction, contact us below or create a ticket.</p>
+
+    <!-- Support Contact Info -->
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+        <h4>Contact Support</h4>
+        <p><strong>Email:</strong> {{ support_email }}</p>
+        <p><strong>Phone:</strong> {{ support_phone }}</p>
+    </div>
+
+    <!-- Create Ticket Form -->
+    <div style="background: #fff; padding: 20px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 30px;">
+        <h4>Create Ticket</h4>
+        <form method="POST"
+               action="{{ url_for('auth.support') }}">
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}">
+
+            <div style="margin-bottom: 15px;">
+                <label for="subject"><strong>Subject</strong></label>
+                <input
+                    type="text"
+                    name="subject"
+                    id="subject"
+                    class="form-control"
+                    placeholder="e.g. Failed data purchase"
+                    required
+                >
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="message"><strong>Message</strong></label>
+                <textarea
+                    name="message"
+                    id="message"
+                    rows="5"
+                    class="form-control"
+                    placeholder="Describe your issue..."
+                    required
+                ></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Submit Ticket
+            </button>
+        </form>
+    </div>
+
+    <!-- User Tickets -->
+    <div style="background: #fff; padding: 20px; border-radius: 10px; border: 1px solid #ddd;">
+        <h4>My Tickets</h4>
+
+        {% if tickets %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Subject</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Chat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in tickets %}
+                    <tr>
+                        <td>#{{ ticket.id }}</td>
+                        <td>{{ ticket.subject }}</td>
+                        <td>{{ ticket.status|capitalize }}</td>
+                        <td>{{ ticket.created_at.strftime('%d %b %Y, %I:%M %p') }}</td>
+                        <td>
+                            <a href="{{ url_for('auth.support_ticket_chat', ticket_id=ticket.id) }}"
+                               class="btn btn-sm btn-outline-primary">
+                                Open Chat
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No support tickets yet.</p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

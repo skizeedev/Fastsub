@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Edit Plan</h2>
+
+<form method="POST">
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}">
+
+
+    <label>Cost Price</label>
+
+    <input
+        type="number"
+        step="0.01"
+        name="cost_price"
+        value="{{ plan.cost_price }}"
+    >
+
+    <label>Selling Price</label>
+
+    <input
+        type="number"
+        step="0.01"
+        name="selling_price"
+        value="{{ plan.selling_price }}"
+    >
+
+    <label>
+        <input
+            type="checkbox"
+            name="active"
+            {% if plan.active %}
+            checked
+            {% endif %}
+        >
+        Active
+    </label>
+
+    <button type="submit">
+        Update
+    </button>
+
+</form>
+
+{% endblock %}

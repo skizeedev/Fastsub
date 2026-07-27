@@ -1,0 +1,103 @@
+<div class="card border-0 shadow-sm mb-4">
+
+<div class="card-header bg-white">
+
+<h5 class="mb-0">
+
+Recent Transactions
+
+</h5>
+
+</div>
+
+<div class="card-body">
+
+{% if recent_transactions %}
+
+{% for tx in recent_transactions %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+<div>
+
+<strong>
+
+{{ tx.service_type }}
+
+</strong>
+
+<br>
+
+<small>
+
+{{ tx.recipient }}
+
+</small>
+
+</div>
+
+<div class="text-end">
+
+<strong>
+
+₦{{ "{:,.2f}".format(tx.amount) }}
+
+</strong>
+
+<br>
+
+{% if tx.status=="success" %}
+
+<span class="badge bg-success">
+
+Success
+
+</span>
+
+{% elif tx.status=="pending" %}
+
+<span class="badge bg-warning">
+
+Pending
+
+</span>
+
+{% else %}
+
+<span class="badge bg-danger">
+
+Failed
+
+</span>
+
+{% endif %}
+
+</div>
+
+</div>
+
+<hr>
+
+{% endfor %}
+
+<a
+href="{{ url_for('auth.transactions') }}"
+class="btn btn-outline-primary w-100">
+
+View All Transactions
+
+</a>
+
+{% else %}
+
+<div class="text-center">
+
+No transaction yet.
+
+</div>
+
+{% endif %}
+
+</div>
+
+</div>

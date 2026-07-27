@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+            <div class="mb-4">
+                <h3 class="fw-bold mb-1">Electricity Payment</h3>
+                <p class="text-muted mb-0">
+                    Verify your meter details before proceeding with payment.
+                </p>
+            </div>
+
+            <form method="POST"
+                  action="{{ url_for('auth.verify_electricity') }}">
+
+                 <input
+                     type="hidden"
+                     name="csrf_token"
+                     value="{{ csrf_token() }}">
+
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Electric Company</label>
+                    <select name="electric_company" class="form-select" required>
+                        <option value="">Select company</option>
+                        {% for code, name in companies.items() %}
+                            <option value="{{ code }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Meter Type</label>
+                    <select name="meter_type" class="form-select" required>
+                        <option value="">Select meter type</option>
+                        {% for code, name in meter_types.items() %}
+                            <option value="{{ code }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Meter Number</label>
+                    <input
+                        type="text"
+                        name="meter_no"
+                        class="form-control"
+                        placeholder="Enter meter number"
+                        required
+                    >
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Amount</label>
+                    <input
+                        type="number"
+                        name="amount"
+                        class="form-control"
+                        placeholder="Enter amount"
+                        min="1000"
+                        required
+                    >
+                    <small class="text-muted">Minimum amount is ₦1,000</small>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Phone Number</label>
+                    <input
+                        type="text"
+                        name="phone"
+                        class="form-control"
+                        placeholder="Enter phone number"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                    Verify Meter
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

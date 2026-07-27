@@ -1,0 +1,1293 @@
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import (
+    login_user,
+    login_required,
+    logout_user,
+    current_user
+)
+from flask import redirect, url_for
+
+from app import db
+from app.models.user import User
+import random
+from app.models.transaction import Transaction
+import uuid
+from app.models.wallet_transaction import WalletTransaction
+import uuid
+from app.models.transaction import Transaction
+from flask_mail import Message
+from app import mail
+from itsdangerous import (
+    URLSafeTimedSerializer,
+    SignatureExpired,
+    BadSignature
+)
+from flask import (
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash,
+    session,
+    current_app
+)
+
+import requests
+from flask_login import login_required, current_user
+import uuid
+from app import db
+from app.models.transaction import Transaction
+from app.services.paystack import initialize_payment
+from flask import render_template, request, redirect, url_for, session, flash, current_app
+from flask_login import login_required, current_user
+from app.services.wallet_service import credit_wallet
+from app.services.clubkonnect import buy_airtime
+
+NETWORK_CODES = {
+    "mtn": "01",
+    "glo": "02",
+    "9mobile": "03",
+    "airtel": "04"
+}
+
+
+auth_bp = Blueprint("auth", __name__)
+
+
+@auth_bp.route("/")
+def home():
+    return redirect(url_for("auth.login"))
+
+# REGISTER
+@auth_bp.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form.get("username")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        referred_by = request.form.get(
+            "referred_by"
+        )
+
+        user_exists = User.query.filter_by(email=email).first()
+
+        if user_exists:
+            flash("Email already exists")
+            return redirect(url_for("auth.register"))
+
+        hashed_password = generate_password_hash(password)
+
+        password = request.form["password"]
+
+        confirm_password = request.form["confirm_password"]
+
+        if password != confirm_password:
+
+            flash(
+                "Passwords do not match",
+                "danger"
+            )
+
+            return redirect(
+                url_for("auth.register")
+            )
+
+        referral_code = (
+            username[:4].upper()
+            + str(random.randint(1000, 9999))
+        )
+
+        new_user = User(
+            username=username,
+            email=email,
+            password_hash=hashed_password,
+            referral_code=referral_code,
+            referred_by=referred_by
+        )
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        try:
+            send_verification_email(new_user)
+        except Exception as e:
+            print("EMAIL ERROR:", e)
+
+        flash("Account created successfully. Check your email to verify your account.")
+        return redirect(url_for("auth.login"))
+
+    return render_template("auth/register.html")
+
+def reward_referrer(user, amount):
+
+    if not user.referred_by:
+
+        return
+
+    referrer = User.query.filter_by(
+        referral_code=user.referred_by
+    ).first()
+
+    if not referrer:
+
+        return
+
+    commission = amount * 0.02
+
+    referrer.wallet_balance += commission
+
+    referrer.referral_earnings = (
+        referrer.referral_earnings or 0
+    ) + commission
+
+
+# LOGIN
+@auth_bp.route("/login", methods=["GET", "POST"])
+def login():
+
+    if request.method == "POST":
+
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        user = User.query.filter_by(
+            email=email
+        ).first()
+
+        if not user or not check_password_hash(
+            user.password_hash,
+            password
+        ):
+            flash("Invalid credentials")
+            return redirect(
+                url_for("auth.login")
+            )
+
+        if not user.is_active_user:
+
+            flash("Account suspended")
+
+            return redirect(
+                url_for("auth.login")
+            )
+
+        if not user.is_verified:
+
+            flash(
+                "Verify your email before logging in."
+            )
+
+            return redirect(
+                url_for("auth.login")
+            )
+
+        login_user(user)
+
+        next_page = request.args.get("next")
+
+        if next_page:
+            return redirect(next_page)
+
+        flash("Login successful")
+
+        return redirect(
+            url_for("auth.dashboard")
+        )
+
+    return render_template(
+        "auth/login.html"
+    )
+
+@auth_bp.route(
+    "/forgot-password",
+    methods=["GET", "POST"]
+)
+def forgot_password():
+
+    if request.method == "POST":
+
+        email = request.form.get(
+            "email"
+        )
+
+        user = User.query.filter_by(
+            email=email
+        ).first()
+
+        if not user:
+
+            flash(
+                "Email not found"
+            )
+
+            return redirect(
+                url_for(
+                    "auth.forgot_password"
+                )
+            )
+
+        return redirect(
+            url_for(
+                "auth.reset_password",
+                user_id=user.id
+            )
+        )
+
+    return render_template(
+        "auth/forgot_password.html"
+    )
+
+@auth_bp.route(
+    "/reset-password/<int:user_id>",
+    methods=["GET", "POST"]
+)
+def reset_password(user_id):
+
+    user = User.query.get_or_404(
+        user_id
+    )
+
+    if request.method == "POST":
+
+        password = request.form.get(
+            "password"
+        )
+
+        user.password_hash = (
+            generate_password_hash(
+                password
+            )
+        )
+
+        db.session.commit()
+
+        flash(
+            "Password updated successfully"
+        )
+
+        return redirect(
+            url_for("auth.login")
+        )
+
+    return render_template(
+        "auth/reset_password.html",
+        user=user
+    )
+
+#VERIFICATION
+from itsdangerous import URLSafeTimedSerializer
+from flask import current_app
+
+def generate_verification_token(email):
+
+    serializer = URLSafeTimedSerializer(
+        current_app.config["SECRET_KEY"]
+    )
+
+    return serializer.dumps(
+        email,
+        salt="email-verification"
+    )
+
+def send_verification_email(user):
+
+    token = generate_verification_token(
+        user.email
+    )
+
+    verify_link = url_for(
+        "auth.verify_email",
+        token=token,
+        _external=True
+    )
+
+    msg = Message(
+        "Verify Your FastSub Account",
+        recipients=[user.email]
+    )
+
+    msg.body = f"""
+Welcome to FastSub!
+
+Click the link below to verify your email:
+
+{verify_link}
+
+If you did not create this account,
+ignore this email.
+"""
+
+    try:
+        mail.send(msg)
+        print(f"EMAIL SENT TO {user.email}")
+    except Exception as e:
+        print(f"EMAIL ERROR: {e}")
+
+@auth_bp.route("/verify-email/<token>")
+def verify_email(token):
+
+    serializer = URLSafeTimedSerializer(
+        current_app.config["SECRET_KEY"]
+    )
+
+    try:
+
+        email = serializer.loads(
+            token,
+            salt="email-verification",
+            max_age=86400
+        )
+
+    except (SignatureExpired, BadSignature):
+
+        return "Verification link invalid."
+
+    user = User.query.filter_by(
+        email=email
+    ).first()
+
+    if user:
+
+        user.is_verified = True
+        db.session.commit()
+
+    return redirect(
+        url_for("auth.login")
+    )
+
+
+# DASHBOARD
+@auth_bp.route("/dashboard")
+@login_required
+def dashboard():
+    return render_template(
+        "dashboard/home.html",
+        user=current_user
+    )
+
+#PROFILLE
+@auth_bp.route("/profile")
+@login_required
+def profile():
+
+    return render_template(
+        "dashboard/profile.html"
+    )
+
+#FUND WALLET
+
+@auth_bp.route("/fund-wallet/paystack")
+@login_required
+def fund_wallet_paystack():
+
+    amount = float(request.args.get("amount"))
+
+    paystack_response = initialize_payment(
+        email=current_user.email,
+        amount=amount,
+        callback_url=url_for(
+            "auth.verify_payment",
+            _external=True
+        )
+    )
+
+    print("KEY =", current_app.config.get("PAYSTACK_SECRET_KEY"))
+    print("RESPONSE =", paystack_response)
+
+    if paystack_response.get("status"):
+
+        return redirect(
+            paystack_response["data"]["authorization_url"]
+        )
+
+    print("PAYSTACK KEY:")
+    print(current_app.config["PAYSTACK_SECRET_KEY"])
+
+    flash("Payment initialization failed")
+    return redirect(url_for("auth.fund_wallet"))
+
+
+@auth_bp.route("/fund-wallet", methods=["GET", "POST"])
+@login_required
+def fund_wallet():
+
+    if request.method == "POST":
+
+        amount = float(request.form.get("amount"))
+
+        # store in session for preview step
+        session["fund_amount"] = amount
+        session["fund_reference"] = str(uuid.uuid4())
+
+        return redirect(url_for("auth.fund_wallet_preview"))
+
+    return render_template("dashboard/fund_wallet.html")
+
+
+@auth_bp.route("/verify-payment")
+@login_required
+def verify_payment():
+
+    reference = request.args.get("reference")
+
+    existing = Transaction.query.filter_by(
+        reference=reference
+    ).first()
+
+    if existing:
+        flash("Payment already processed")
+        return redirect(url_for("auth.dashboard"))
+
+
+    headers = {
+        "Authorization": f"Bearer {current_app.config['PAYSTACK_SECRET_KEY']}"
+    }
+
+    response = requests.get(
+        f"https://api.paystack.co/transaction/verify/{reference}",
+        headers=headers
+    )
+
+    data = response.json()
+
+    if (
+        data["status"] and
+        data["data"]["status"] == "success"
+    ):
+
+        amount = data["data"]["amount"] / 100
+
+        credit_wallet(current_user, amount)
+
+        transaction = Transaction(
+            user_id=current_user.id,
+            service_type="wallet_funding",
+            amount=amount,
+            recipient="Paystack",
+            status="success",
+            reference=reference
+        )
+
+        db.session.add(transaction)
+        db.session.commit()
+
+        flash("Wallet funded successfully!")
+
+        return redirect(url_for("auth.dashboard"))
+
+@auth_bp.route("/fund-wallet/preview", methods=["GET", "POST"])
+@login_required
+def fund_wallet_preview():
+
+    amount = session.get("fund_amount")
+    reference = session.get("fund_reference")
+
+    if not amount:
+        return redirect(url_for("auth.fund_wallet"))
+
+    if request.method == "POST":
+
+        transaction = Transaction(
+            user_id=current_user.id,
+            service_type="wallet_funding",
+            amount=amount,
+            recipient="Paystack",
+            status="pending",
+            reference=reference
+        )
+
+        db.session.add(transaction)
+        db.session.commit()
+
+        return redirect(
+            url_for(
+                "auth.fund_wallet_paystack",
+                amount=amount,
+                reference=reference
+            )
+        )
+
+    return render_template(
+        "dashboard/fund_preview.html",
+        amount=amount,
+        reference=reference
+    )
+
+
+#TRANSACTION
+@auth_bp.route("/transactions")
+@login_required
+def transactions():
+
+    search = request.args.get(
+        "search",
+        ""
+    )
+
+    service = request.args.get(
+        "service",
+        ""
+    )
+
+    query = Transaction.query.filter_by(
+        user_id=current_user.id
+    )
+
+    if search:
+
+        query = query.filter(
+            Transaction.recipient.contains(search)
+        )
+
+    if service:
+
+        query = query.filter(
+            Transaction.service_type.contains(service)
+        )
+
+    transactions = query.order_by(
+        Transaction.id.desc()
+    ).all()
+
+    return render_template(
+        "dashboard/transactions.html",
+        transactions=transactions
+    )
+
+#RECEIPT
+@auth_bp.route("/receipt/<int:transaction_id>")
+@login_required
+def receipt(transaction_id):
+
+    transaction = Transaction.query.get_or_404(
+        transaction_id
+    )
+
+    if transaction.user_id != current_user.id and not current_user.is_admin:
+
+        flash("Access denied")
+
+        return redirect(
+            url_for("auth.dashboard")
+        )
+
+    return render_template(
+        "dashboard/receipt.html",
+        transaction=transaction
+    )
+
+#WALLET HISTORY
+@auth_bp.route("/wallet-history")
+@login_required
+def wallet_history():
+
+    transactions = WalletTransaction.query.filter_by(
+        user_id=current_user.id
+    ).order_by(
+        WalletTransaction.created_at.desc()
+    ).all()
+
+    return render_template(
+        "dashboard/wallet_history.html",
+        transactions=transactions
+    )
+
+#SERVICES
+@auth_bp.route("/data", methods=["GET", "POST"])
+@login_required
+def buy_data():
+
+    if request.method == "POST":
+
+        network = request.form.get("network")
+        phone = request.form.get("phone")
+        amount = float(request.form.get("amount"))
+
+        return render_template(
+            "services/data_preview.html",
+            network=network,
+            phone=phone,
+            amount=amount
+        )
+
+    return render_template(
+        "services/data.html"
+    )
+
+@auth_bp.route("/data/confirm", methods=["POST"])
+@login_required
+def confirm_data():
+
+    network = request.form.get("network")
+    phone = request.form.get("phone")
+    amount = float(request.form.get("amount"))
+
+    if current_user.wallet_balance < amount:
+
+        flash("Insufficient wallet balance")
+
+        return redirect(
+            url_for("auth.buy_data_page")
+        )
+
+    current_user.wallet_balance -= amount
+  
+    reward_referrer(
+        current_user,
+        amount
+    )
+
+    current_user.total_spent = (
+        current_user.total_spent or 0.0
+    ) + amount
+
+    transaction = Transaction(
+        user_id=current_user.id,
+        service_type=f"{network} Data",
+        amount=amount,
+        recipient=phone,
+        status="success",
+        reference=str(uuid.uuid4())
+    )
+
+    db.session.add(transaction)
+    db.session.commit()
+
+    flash("Data purchase successful")
+
+    return redirect(
+        url_for(
+            "auth.receipt",
+            transaction_id=transaction.id
+        )
+    )
+
+
+@auth_bp.route("/airtime", methods=["GET", "POST"])
+@login_required
+def airtime():
+
+    if request.method == "POST":
+
+        network = request.form.get("network")
+        phone = request.form.get("phone")
+        amount = float(request.form.get("amount"))
+
+        return render_template(
+            "services/airtime_preview.html",
+            network=network,
+            phone=phone,
+            amount=amount
+        )
+
+    return render_template(
+        "services/airtime.html"
+    )
+
+@auth_bp.route("/airtime/confirm", methods=["POST"])
+@login_required
+def confirm_airtime():
+
+```
+network = request.form.get("network")
+phone = request.form.get("phone")
+amount = float(request.form.get("amount"))
+
+if current_user.wallet_balance < amount:
+    flash("Insufficient wallet balance")
+    return redirect(url_for("auth.airtime"))
+
+network_code = NETWORK_CODES.get(network.lower())
+
+if not network_code:
+    flash("Invalid network selected")
+    return redirect(url_for("auth.airtime"))
+
+request_id = str(uuid.uuid4())
+
+transaction = Transaction(
+    user_id=current_user.id,
+    service_type="Airtime",
+    amount=amount,
+    recipient=phone,
+    status="pending",
+    reference=request_id
+)
+
+db.session.add(transaction)
+db.session.commit()
+
+try:
+
+    api_response = buy_airtime(
+        network=network_code,
+        amount=amount,
+        phone=phone,
+        request_id=request_id
+    )
+
+    print("AIRTIME RESPONSE:", api_response)
+
+    if api_response.get("status") == "ORDER_RECEIVED":
+
+        current_user.wallet_balance -= amount
+
+        current_user.total_spent = (
+            current_user.total_spent or 0
+        ) + amount
+
+        reward_referrer(
+            current_user,
+            amount
+        )
+
+        transaction.status = "success"
+
+        db.session.commit()
+
+        flash("Airtime purchase successful")
+
+        return redirect(
+            url_for(
+                "auth.receipt",
+                transaction_id=transaction.id
+            )
+        )
+
+    else:
+
+        transaction.status = "failed"
+        db.session.commit()
+
+        flash("Airtime purchase failed")
+
+        return redirect(
+            url_for("auth.airtime")
+        )
+
+except Exception as e:
+
+    print("AIRTIME ERROR:", e)
+
+    transaction.status = "failed"
+    db.session.commit()
+
+    flash("An error occurred while processing airtime")
+
+    return redirect(
+        url_for("auth.airtime")
+    )
+```
+
+
+@auth_bp.route("/test-airtime")
+def test_airtime():
+
+    result = buy_airtime(
+        network="01",
+        amount=50,
+        phone="08012345678",
+        request_id="TEST123"
+    )
+
+    return result
+
+
+@auth_bp.route("/electricity", methods=["GET", "POST"])
+@login_required
+def electricity():
+
+    if request.method == "POST":
+
+        disco = request.form.get("disco")
+        meter = request.form.get("meter")
+        amount = float(request.form.get("amount"))
+
+        return render_template(
+            "services/electricity_preview.html",
+            disco=disco,
+            meter=meter,
+            amount=amount
+        )
+
+    return render_template(
+        "services/electricity.html"
+    )
+
+@auth_bp.route("/electricity/confirm", methods=["POST"])
+@login_required
+def confirm_electricity():
+
+    disco = request.form.get("disco")
+    meter = request.form.get("meter")
+    amount = float(request.form.get("amount"))
+
+    if current_user.wallet_balance < amount:
+
+        flash("Insufficient wallet balance")
+
+        return redirect(
+            url_for("auth.electricity")
+        )
+
+    current_user.wallet_balance -= amount
+
+    reward_referrer(
+        current_user,
+        amount
+    )
+
+    current_user.total_spent = (
+        current_user.total_spent or 0.0
+    ) + amount
+
+    transaction = Transaction(
+        user_id=current_user.id,
+        service_type=f"{disco} Electricity",
+        amount=amount,
+        recipient=meter,
+        status="success",
+        reference=str(uuid.uuid4())
+    )
+
+    db.session.add(transaction)
+    db.session.commit()
+
+    flash("Electricity payment successful")
+
+    return redirect(
+        url_for(
+            "auth.receipt",
+            transaction_id=transaction.id
+        )
+    )
+
+
+@auth_bp.route("/cable", methods=["GET", "POST"])
+@login_required
+def cable():
+
+    if request.method == "POST":
+
+        provider = request.form.get("provider")
+        smartcard = request.form.get("smartcard")
+        package = request.form.get("package")
+        amount = float(request.form.get("amount"))
+
+        return render_template(
+            "services/cable_preview.html",
+            provider=provider,
+            smartcard=smartcard,
+            package=package,
+            amount=amount
+        )
+
+    return render_template(
+        "services/cable.html"
+    )
+
+@auth_bp.route("/cable/confirm", methods=["POST"])
+@login_required
+def confirm_cable():
+
+    provider = request.form.get("provider")
+    smartcard = request.form.get("smartcard")
+    package = request.form.get("package")
+    amount = float(request.form.get("amount"))
+
+    if current_user.wallet_balance < amount:
+
+        flash("Insufficient wallet balance")
+
+        return redirect(
+        url_for(
+            "auth.receipt",
+            transaction_id=transaction.id
+        )
+    )
+
+    current_user.wallet_balance -= amount
+
+    reward_referrer(
+        current_user,
+        amount
+    )
+
+    current_user.total_spent = (
+        current_user.total_spent or 0.0
+    ) + amount
+
+    transaction = Transaction(
+        user_id=current_user.id,
+        service_type=f"{provider} {package}",
+        amount=amount,
+        recipient=smartcard,
+        status="success",
+        reference=str(uuid.uuid4())
+    )
+
+    db.session.add(transaction)
+    db.session.commit()
+
+    flash("Cable subscription successful")
+
+    return redirect(
+        url_for("auth.transactions")
+    )
+
+
+@auth_bp.route("/betting", methods=["GET", "POST"])
+@login_required
+def betting():
+
+    if request.method == "POST":
+
+        company = request.form.get("company")
+        customer_id = request.form.get("customer_id")
+        amount = float(request.form.get("amount"))
+
+        return render_template(
+            "services/betting_preview.html",
+            company=company,
+            customer_id=customer_id,
+            amount=amount
+        )
+
+    return render_template(
+        "services/betting.html"
+    )
+
+@auth_bp.route("/betting/confirm", methods=["POST"])
+@login_required
+def confirm_betting():
+
+    company = request.form.get("company")
+    customer_id = request.form.get("customer_id")
+    amount = float(request.form.get("amount"))
+
+    if current_user.wallet_balance < amount:
+
+        flash("Insufficient wallet balance")
+
+        return redirect(
+            url_for("auth.betting")
+        )
+
+    current_user.wallet_balance -= amount
+
+    reward_referrer(
+        current_user,
+        amount
+    )
+
+    current_user.total_spent = (
+        current_user.total_spent or 0.0
+    ) + amount
+
+    transaction = Transaction(
+        user_id=current_user.id,
+        service_type=f"{company} Funding",
+        amount=amount,
+        recipient=customer_id,
+        status="success",
+        reference=str(uuid.uuid4())
+    )
+
+    db.session.add(transaction)
+    db.session.commit()
+
+    flash("Betting wallet funded successfully")
+
+    return redirect(
+        url_for(
+            "auth.receipt",
+            transaction_id=transaction.id
+        )
+    )
+
+# UPDATE WALLET
+@auth_bp.route("/update_wallet")
+@login_required
+def update_wallet(user, amount, mode="spend"):
+    if user.total_spent is None:
+        user.total_spent = 0
+
+    if user.total_funded is None:
+        user.total_funded = 0
+
+    if mode == "spend":
+        user.total_spent += amount
+
+    elif mode == "fund":
+        user.total_funded += amount
+
+    user.wallet_balance = (user.total_funded - user.total_spent)
+
+#admin
+@auth_bp.route("/admin")
+@login_required
+def admin_dashboard():
+
+    if not current_user.is_admin:
+        return "Access Denied"
+
+    users = User.query.all()
+    transactions = Transaction.query.all()
+
+    total_users = len(users)
+
+    total_transactions = len(transactions)
+
+    total_revenue = sum(
+        t.amount
+        for t in transactions
+        if t.status == "success"
+    )
+
+    total_wallet_balance = sum(
+        (u.wallet_balance or 0)
+        for u in users
+    )
+
+    recent_users = User.query.order_by(
+        User.id.desc()
+    ).limit(5).all()
+
+    recent_transactions = Transaction.query.order_by(
+        Transaction.id.desc()
+    ).limit(10).all()
+
+    return render_template(
+        "admin/dashboard.html",
+        total_users=total_users,
+        total_transactions=total_transactions,
+        total_revenue=total_revenue,
+        total_wallet_balance=total_wallet_balance,
+        recent_users=recent_users,
+        recent_transactions=recent_transactions
+    )
+
+@auth_bp.route("/admin/users")
+@login_required
+def admin_users():
+
+    if not current_user.is_admin:
+
+        flash("Access denied")
+
+        return redirect(
+            url_for("auth.dashboard")
+        )
+
+    users = User.query.order_by(
+        User.id.desc()
+    ).all()
+
+    return render_template(
+        "admin/users.html",
+        users=users
+    )
+
+@auth_bp.route(
+    "/admin/credit/<int:user_id>",
+    methods=["GET", "POST"]
+)
+@login_required
+def credit_user(user_id):
+
+    if not current_user.is_admin:
+
+        flash("Access denied")
+
+        return redirect(
+            url_for("auth.dashboard")
+        )
+
+    user = User.query.get_or_404(user_id)
+
+    if request.method == "POST":
+
+        amount = float(
+            request.form.get("amount")
+        )
+
+        user.wallet_balance += amount
+
+        user.total_funded = (
+            user.total_funded or 0
+        ) + amount
+
+        db.session.commit()
+
+        flash(
+            "Wallet credited successfully"
+        )
+
+        return redirect(
+            url_for("auth.admin_users")
+        )
+
+    return render_template(
+        "admin/credit_user.html",
+        user=user
+    )
+
+@auth_bp.route("/admin/transactions")
+@login_required
+def admin_transactions():
+
+    if not current_user.is_admin:
+
+        flash("Access denied")
+
+        return redirect(
+            url_for("auth.dashboard")
+        )
+
+    search = request.args.get(
+        "search",
+        ""
+    )
+
+    query = Transaction.query
+
+    if search:
+
+        query = query.filter(
+            Transaction.recipient.contains(search)
+        )
+
+    transactions = query.order_by(
+        Transaction.id.desc()
+    ).all()
+
+    return render_template(
+        "admin/transactions.html",
+        transactions=transactions
+    )
+
+@auth_bp.route(
+    "/admin/suspend/<int:user_id>"
+)
+@login_required
+def suspend_user(user_id):
+
+    if not current_user.is_admin:
+
+        flash("Access denied")
+
+        return redirect(
+            url_for("auth.dashboard")
+        )
+
+    user = User.query.get_or_404(
+        user_id
+    )
+
+    user.is_active_user = False
+
+    db.session.commit()
+
+    flash(
+        "User suspended"
+    )
+
+    return redirect(
+        url_for("auth.admin_users")
+    )
+
+@auth_bp.route(
+    "/admin/activate/<int:user_id>"
+)
+@login_required
+def activate_user(user_id):
+
+    if not current_user.is_admin:
+
+        flash("Access denied")
+
+        return redirect(
+            url_for("auth.dashboard")
+        )
+
+    user = User.query.get_or_404(
+        user_id
+    )
+
+    user.is_active_user = True
+
+    db.session.commit()
+
+    flash(
+        "User activated"
+    )
+
+    return redirect(
+        url_for("auth.admin_users")
+    )
+
+@auth_bp.route(
+    "/admin/make-admin/<int:user_id>"
+)
+@login_required
+def make_admin(user_id):
+
+    if not current_user.is_admin:
+
+        return redirect(
+            url_for("auth.dashboard")
+        )
+
+    user = User.query.get_or_404(
+        user_id
+    )
+
+    user.is_admin = True
+
+    db.session.commit()
+
+    flash(
+        "User promoted"
+    )
+
+    return redirect(
+        url_for("auth.admin_users")
+    )
+
+@auth_bp.route(
+    "/admin/remove-admin/<int:user_id>"
+)
+@login_required
+def remove_admin(user_id):
+
+    if not current_user.is_admin:
+
+        return redirect(
+            url_for("auth.dashboard")
+        )
+
+    user = User.query.get_or_404(
+        user_id
+    )
+
+    user.is_admin = False
+
+    db.session.commit()
+
+    flash(
+        "Admin removed"
+    )
+
+    return redirect(
+        url_for("auth.admin_users")
+    )
+
+
+# LOGOUT
+@auth_bp.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("Logged out successfully")
+    return redirect(url_for("auth.login"))
