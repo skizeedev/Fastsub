@@ -34,3 +34,4 @@ fastsub_backups/
 
 # Local testing
 test_mail.py
+*.save
